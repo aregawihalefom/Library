@@ -15,6 +15,7 @@ import business.SystemController;
 
 
 public class AllMemberIdsWindow extends JFrame implements LibWindow {
+
 	public static final AllMemberIdsWindow INSTANCE = new AllMemberIdsWindow();
     ControllerInterface ci = new SystemController();
 	private boolean isInitialized = false;

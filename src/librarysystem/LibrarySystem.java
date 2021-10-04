@@ -3,6 +3,8 @@ package librarysystem;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,9 +51,12 @@ public class LibrarySystem extends JFrame implements LibWindow {
     
     public void init() {
     	formatContentPane();
-    	setPathToImage();
+
+		if(getOperatingSystem().equals("Mac OS X"))
+		   setPathToImageMac();
+		else
+			setPathToImage();
     	insertSplashImage();
-		
 		createMenus();
 		//pack();
 		setSize(660,500);
@@ -65,9 +70,22 @@ public class LibrarySystem extends JFrame implements LibWindow {
 	}
     
     private void setPathToImage() {
-    	String currDirectory = System.getProperty("user.home");
+    	String currDirectory = System.getProperty("user.dir");
     	pathToImage = currDirectory+"\\src\\librarysystem\\library.jpg";
+
     }
+
+	public String getOperatingSystem() {
+		String os = System.getProperty("os.name");
+		System.out.println("Using System Property: " + os);
+		return os;
+	}
+
+	public void setPathToImageMac(){
+		Path currentRelativePath = Paths.get("");
+		String s = currentRelativePath.toAbsolutePath().toString();
+		pathToImage = s+"/src/librarysystem/library.jpg";
+	}
     
     private void insertSplashImage() {
         ImageIcon image = new ImageIcon(pathToImage);

@@ -1,2 +1,9 @@
 # Project exclude paths
 /bin/
+./.idea
+./.classpath
+./.settings
+./.project
+ProjectSwing_StartupCode.iml
+
+

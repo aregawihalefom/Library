@@ -68,7 +68,7 @@ public class AdminstratorDashboard extends JFrame implements LibWindow {
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                 linkList, cards);
-        splitPane.setDividerLocation(120);
+        splitPane.setDividerLocation(200);
         add(splitPane, BorderLayout.CENTER);
 
         isInitialized = true;

@@ -3,7 +3,6 @@ package librarysystem;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.TextArea;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -15,6 +14,7 @@ import business.SystemController;
 
 
 public class AllMemberIdsWindow extends JFrame implements LibWindow {
+
 	public static final AllMemberIdsWindow INSTANCE = new AllMemberIdsWindow();
     ControllerInterface ci = new SystemController();
 	private boolean isInitialized = false;

@@ -8,6 +8,9 @@ import dataaccess.Auth;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessFacade;
 import dataaccess.User;
+import librarysystem.AddMemberScreen;
+import librarysystem.LibrarySystem;
+import librarysystem.LoginScreen;
 
 public class SystemController implements ControllerInterface {
 	public static Auth currentAuth = null;
@@ -15,7 +18,6 @@ public class SystemController implements ControllerInterface {
 	public void login(String id, String password) throws LoginException {
 		DataAccess da = new DataAccessFacade();
 		HashMap<String, User> map = da.readUserMap();
-		System.out.println(map.toString());
 
 		if(!map.containsKey(id)) {
 			throw new LoginException("ID " + id + " not found");
@@ -28,8 +30,10 @@ public class SystemController implements ControllerInterface {
 		currentAuth = map.get(id).getAuthorization();
 
 		//
-		if(currentAuth.equals("LIBRARIAN")){
-
+		if(currentAuth.name().equals("LIBRARIAN")){
+			LibrarySystem.hideAllWindows();
+			AddMemberScreen.INSTANCE.init();
+			AddMemberScreen.INSTANCE.setVisible(true);
 		}
 		else if(currentAuth.equals("ADMIN")){
 

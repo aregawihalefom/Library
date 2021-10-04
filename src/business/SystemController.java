@@ -15,6 +15,7 @@ public class SystemController implements ControllerInterface {
 	public void login(String id, String password) throws LoginException {
 		DataAccess da = new DataAccessFacade();
 		HashMap<String, User> map = da.readUserMap();
+		System.out.println(map.toString());
 
 		if(!map.containsKey(id)) {
 			throw new LoginException("ID " + id + " not found");
@@ -25,6 +26,21 @@ public class SystemController implements ControllerInterface {
 			throw new LoginException("Password incorrect");
 		}
 		currentAuth = map.get(id).getAuthorization();
+
+		//
+		if(currentAuth.equals("LIBRARIAN")){
+
+		}
+		else if(currentAuth.equals("ADMIN")){
+
+		}
+		else if(currentAuth.equals("BOTH")){
+
+		}else{
+			throw new LoginException("Cannot Authorize");
+
+		}
+
 	}
 	@Override
 	public List<String> allMemberIds() {

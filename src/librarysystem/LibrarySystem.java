@@ -42,7 +42,6 @@ public class LibrarySystem extends JFrame implements LibWindow {
 		
 		for(LibWindow frame: allWindows) {
 			frame.setVisible(false);
-			
 		}
 	}
     

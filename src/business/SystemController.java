@@ -15,6 +15,8 @@ import dataaccess.User;
 import librarysystem.AddMemberScreen;
 import librarysystem.LibrarySystem;
 
+import javax.xml.crypto.Data;
+
 public class SystemController implements ControllerInterface {
 
 	public static Auth currentAuth = null;
@@ -74,15 +76,18 @@ public class SystemController implements ControllerInterface {
 	/**
 	 *  Add New book
 	 * @param member
+	 * @return
 	 */
 	public boolean addMember(LibraryMember member){
+
 		MemberController mc = new MemberController();
-		boolean success =  mc.memberIdTakenCheck(member.getMemberId(), allMemberIds());
-		if(!success) {
-			return success;
-		}
+//		boolean success =  mc.memberIdTakenCheck(member.getMemberId(), allMemberIds());
+//		if(!success) {
+//			return success;
+//		}
 		// New member and add this
 		mc.addNewMember(member, new DataAccessFacade());;
+
 		return true;
 	}
 
@@ -108,5 +113,11 @@ public class SystemController implements ControllerInterface {
 			 throw  new BookCopyException("There is no book with ISBN = " + ISBN);
 		 bookCopyController.addNewBookCopy(ISBN);
 		return true;
+	}
+
+	@Override
+	public HashMap<String, LibraryMember> getMembers() {
+		DataAccess da = new DataAccessFacade();
+		return da.readMemberMap();
 	}
 }

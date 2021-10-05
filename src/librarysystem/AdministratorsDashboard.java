@@ -9,6 +9,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 public class AdministratorsDashboard extends JFrame implements LibWindow {
@@ -21,6 +23,7 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
     private JPanel addBookPanel;
     private JPanel addMemberPanel;
     private JPanel addCopyPanel;
+    private JPanel adminDashobardPanel;
     private JPanel mainPanel;
 
 
@@ -38,18 +41,19 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
     public static  String[] sideBarItems;
 
     // list items which will be added to the ListModel for linkList
-    ListItem item1, item2 , item3;
+    ListItem item1, item2 , item3, item4;
 
     //Singleton class
     private AdministratorsDashboard() {
 
         setSize(Config.APP_WIDTH, Config.APP_WIDTH);
-        sideBarItems = new String[]{"Add New Member", "Add New Book", "Add Copy"};
+        sideBarItems = new String[]{"Admin Dashboard", "Add New Member", "Add New Book", "Add Copy"};
 
         // list items which will be added to the ListModel for linkList
         item1 = new ListItem(sideBarItems[0], true);
         item2 = new ListItem(sideBarItems[1], true);
         item3 = new ListItem(sideBarItems[2], true);
+        item4 = new ListItem(sideBarItems[3], true);
 
     }
 
@@ -80,7 +84,7 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
 
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, linkList, cards);
-        splitPane.setDividerLocation(200);
+        splitPane.setDividerLocation(Config.DIVIDER);
 
         mainPanel = new JPanel(new FlowLayout());
         mainPanel.add(splitPane);
@@ -93,6 +97,9 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
 
     public void createMainPanels() {
 
+        // create addmin panel
+        addAdmindDashBoardPanel();
+
         // Add member panel
         addMemberForm();
 
@@ -103,10 +110,48 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
         addBookCopyForm();
 
         cards = new JPanel(new CardLayout());
-        cards.add(addMemberPanel, item1.getItemName());
-        cards.add(addBookPanel, item2.getItemName());
-        cards.add(addCopyPanel, item3.getItemName());
+        cards.add(adminDashobardPanel, item1.getItemName());
+        cards.add(addMemberPanel, item2.getItemName());
+        cards.add(addBookPanel, item3.getItemName());
+        cards.add(addCopyPanel, item4.getItemName());
 
+    }
+
+    private void addAdmindDashBoardPanel() {
+
+        adminDashobardPanel = new JPanel(new BorderLayout());
+        adminDashobardPanel.add(new JLabel("Admin dashboard"), BorderLayout.NORTH);
+        JScrollPane memberListPanel = createMemberListPanel();
+        JScrollPane bookListPanel = createBookListPanel();
+
+
+        JPanel p3=new JPanel();
+        JLabel bookList =new JLabel("Book  copy List");
+        p3.add(bookList);
+
+        JTabbedPane tp=new JTabbedPane();
+        tp.setPreferredSize(new Dimension(Config.APP_WIDTH - Config.DIVIDER, Config.APP_HEIGHT));
+        tp.add("Members",memberListPanel);
+        tp.add("Books",bookListPanel);
+        tp.add("Book Copies",p3);
+        tp.setFont(Config.DEFUALT_FONT);
+        tp.setForeground(Util.LINK_AVAILABLE);
+        tp.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+        adminDashobardPanel.add(tp , BorderLayout.CENTER);
+
+    }
+
+    private JScrollPane createBookListPanel() {
+
+        String data[][]={ {"100","Amit","670000", "1212"},
+                {"102","Jai","780000", "1212312"},
+                {"101","Sachin","700000", "2345314"}};
+        String column[]={"Member ID","First Name","Last Name", "Phone Number"};
+        JTable jt=new JTable(data,column);
+        //jt.setBounds(30,40,200,300);
+        JScrollPane sp=new JScrollPane(jt);
+
+        return sp;
     }
 
     private void addBookForm() {
@@ -141,24 +186,58 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
     private void addMemberForm() {
 
         addMemberPanel = new JPanel(new BorderLayout());
-        JLabel panelTitle = new JLabel(" Add Book");
+        JLabel panelTitle = new JLabel(" Add Member");
         panelTitle.setFont(Config.DEFUALT_FONT);
-        panelTitle.setForeground(Util.LINK_AVAILABLE);
+        panelTitle.setForeground(Util.DARK_BLUE);
 
         addMemberPanel.add(panelTitle , BorderLayout.NORTH);
 
-        JPanel memberFormPanel = createAddBookForm();
+        JPanel memberFormPanel = createMemberForm();
 
         addMemberPanel.add(memberFormPanel , BorderLayout.CENTER);
 
         // add add button
-        JButton addBookBtn = new JButton("Add Book");
-        addBookBtn.addActionListener(new addBookListiner());
-        JPanel addBookBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        addBookBtnPanel.add(addBookBtn);
+        JButton addBMemberBtn = new JButton("Add Member");
+        addBMemberBtn.addActionListener(new addMemberListiner());
+        JPanel addBMemberBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        addBMemberBtnPanel.add(addBMemberBtn);
 
         // add to book Panel at the bottom
-        memberFormPanel.add(addBookBtnPanel, BorderLayout.SOUTH);
+        memberFormPanel.add(addBMemberBtn, BorderLayout.SOUTH);
+    }
+
+    private JScrollPane createMemberListPanel(){
+
+        String column[]={"MEMBER NO.","FULL NAME","PHONE NO.", "Address"};
+        HashMap<String , LibraryMember> memberHashMap = ci.getMembers();
+        System.out.println(memberHashMap.size());
+        String memberData [][] = new String[memberHashMap.size()][4];
+
+        List<String> memberID = ci.allMemberIds();
+
+        for(int i = 0 ; i < memberHashMap.size(); i++){
+
+
+            LibraryMember member = memberHashMap.get(memberID.get(i));
+            System.out.println(member.toString());
+            memberData[i][0] = member.getMemberId();
+            memberData[i][1] = member.getFirstName() + " " + member.getLastName();
+            memberData[i][2] = member.getTelephone();
+            memberData[i][3] = member.getAddress() != null ? member.getAddress().toString() : "";
+        }
+
+        JTable jt=new JTable(memberData,column);
+        JScrollPane sp=new JScrollPane(jt);
+        return sp;
+    }
+
+    private JPanel createMemberForm() {
+
+        JPanel memberFormPanel = new JPanel(new FlowLayout());
+        for (int i = 0; i < memberFields.length; i++) {
+            memberFormPanel.add(getElementWithLabelMember(memeberAttributes[i], i));
+        }
+        return memberFormPanel;
     }
 
     private void addBookCopyForm() {
@@ -185,7 +264,7 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
     }
 
 
-    private JPanel getElementWithLabel(String labelName, int jtextFieldIndex) {
+    private JPanel getElementWithLabelBook(String labelName, int jtextFieldIndex) {
 
         JLabel label = new JLabel(" " + labelName);
         JPanel labelPanel = new JPanel(new BorderLayout());
@@ -202,11 +281,28 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
         return nameForm;
     }
 
+    private JPanel getElementWithLabelMember(String labelName, int jtextFieldIndex) {
+
+        JLabel label = new JLabel(" " + labelName);
+        JPanel labelPanel = new JPanel(new BorderLayout());
+        labelPanel.add(label, BorderLayout.NORTH);
+
+        memberFields[jtextFieldIndex] = new JTextField(20);
+        JPanel formPanel = new JPanel(new BorderLayout());
+        formPanel.add(memberFields[jtextFieldIndex], BorderLayout.NORTH);
+
+        JPanel nameForm = new JPanel(new BorderLayout());
+        nameForm.add(labelPanel, BorderLayout.NORTH);
+        nameForm.add(formPanel, BorderLayout.CENTER);
+
+        return nameForm;
+    }
+
     private JPanel createAddBookForm() {
 
         JPanel bookFormPanel = new JPanel(new FlowLayout());
         for (int i = 0; i < bookFields.length; i++) {
-            bookFormPanel.add(getElementWithLabel(bookAttributes[i], i));
+            bookFormPanel.add(getElementWithLabelBook(bookAttributes[i], i));
         }
         return bookFormPanel;
     }
@@ -230,6 +326,7 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
         model.addElement(item1);
         model.addElement(item2);
         model.addElement(item3);
+        model.addElement(item4);
 
         linkList = new JList<ListItem>(model);
         linkList.setCellRenderer(new DefaultListCellRenderer() {
@@ -286,20 +383,23 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
 
     private class addBookListiner implements ActionListener  {
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) throws NumberFormatException {
 
-            Author author = null;
-            for(JTextField input : bookFields){
-                System.out.println(input.getText());
-                if(isEmptyString(input.getText())){
-                    new Messages.InnerFrame().showMessage("All fields should be nonempty", "Error");
-                    return;
-                }
-            }
+//            Author author = null;
+//            for(int i = 0 ; i < bookFields.length; i++){
+//
+//                if(isEmptyString(bookFields[i].getText())){
+//                    new Messages.InnerFrame().showMessage("All fields should be nonempty", "Error");
+//                    System.out.println("This is not working");
+//                    return;
+//                }
+//            }
             try {
 
                 String title = bookFields[0].getText().trim();
+                System.out.println("Title ="+title);
                 String isbn = bookFields[1].getText().trim();
+
                 int maxBorrowDays = Integer.parseInt(bookFields[2].getText());
 
                 Book book = new Book(isbn, title, maxBorrowDays, new ArrayList<>());
@@ -309,6 +409,8 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
 
             } catch (BookCopyException ex) {
                 new Messages.InnerFrame().showMessage(ex.getMessage(), "Error");
+            }catch (NumberFormatException ex){
+                new Messages.InnerFrame().showMessage("Input for Max days should be a number", "Error");
             }
 
         }
@@ -323,18 +425,19 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
                 if(isEmptyString(input.getText())){
                     new Messages.InnerFrame().showMessage("All fields should be nonempty", "Error");
                     break;
-                }else{
-
-                    try {
-                        LibraryMember member = new LibraryMember(memberFields[0].getText(), memberFields[1].getText(),
-                                                                 memberFields[2].getText(), memberFields[3].getText(), null);
-                        boolean status = ci.addMember(member);
-                        if(status) throw new LibraryMemberException("Member Id is already taken");
-
-                    } catch (LibraryMemberException ex) {
-                       new Messages.InnerFrame().showMessage(ex.getMessage(), "Error");
-                    }
                 }
+            }
+
+            try {
+                LibraryMember member = new LibraryMember(memberFields[0].getText(), memberFields[1].getText(),
+                        memberFields[2].getText(), memberFields[3].getText(), null);
+                System.out.println(ci.allMemberIds().toString());
+                boolean status = ci.addMember(member);
+                if(!status) throw new LibraryMemberException("Member Id is already taken");
+                new Messages.InnerFrame().showMessage("Member added Successfully", "Info");
+                System.out.println(ci.allMemberIds().toString());
+            } catch (LibraryMemberException ex) {
+                new Messages.InnerFrame().showMessage(ex.getMessage(), "Error");
             }
         }
     }

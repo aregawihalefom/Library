@@ -14,13 +14,11 @@ public class Main {
 	         {
 	            LoginScreen.INSTANCE.setTitle(Config.APP_NAME);
 				LoginScreen.INSTANCE.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 				 LoginScreen.INSTANCE.init();
 	            centerFrameOnDesktop(LoginScreen.INSTANCE);
 				 LoginScreen.INSTANCE.setVisible(true);
 	         });
 	   }
-	   
 	   public static void centerFrameOnDesktop(Component f) {
 			Toolkit toolkit = Toolkit.getDefaultToolkit();
 			int height = toolkit.getScreenSize().height;

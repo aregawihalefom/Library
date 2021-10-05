@@ -13,11 +13,15 @@ import librarysystem.LibrarySystem;
 import librarysystem.LoginScreen;
 
 public class SystemController implements ControllerInterface {
+
 	public static Auth currentAuth = null;
 	
 	public void login(String id, String password) throws LoginException {
+
 		DataAccess da = new DataAccessFacade();
 		HashMap<String, User> map = da.readUserMap();
+
+		System.out.println(map.toString());
 
 		if(!map.containsKey(id)) {
 			throw new LoginException("ID " + id + " not found");

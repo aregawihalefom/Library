@@ -15,14 +15,22 @@ public class AdminstratorDashboard extends JFrame implements LibWindow {
     public static final AdminstratorDashboard INSTANCE = new AdminstratorDashboard();
     ControllerInterface ci = new SystemController();
     private boolean isInitialized = false;
+
+    private JPanel addBookPanel;
+    private JPanel addMemberPanel;
+    private JPanel addCopyPanel;
     private JPanel mainPanel;
-    private JPanel topPanel;
-    private JPanel middlePanel;
-    private JPanel lowerPanel;
-    private TextArea textArea;
+
     JList<ListItem> linkList;
     JPanel cards;
 
+    private String[] bookAttributes = {"Title", "ISBN", "Max days" , "Authors"};
+    private String[] memeberAttributes = {"Member Number", "First Name", "Last Name", "Phone Number"};
+    private String[] copyAttributes = {"Copy Number", "Book ISBN"};
+
+    private JTextField[] bookFields = new JTextField[bookAttributes.length];
+    private JTextField[] memberFields = new JTextField[memeberAttributes.length];
+    private JTextField[] copyFields = new JTextField[copyAttributes.length];
 
     public static  String[] sideBarItems;
 
@@ -50,7 +58,7 @@ public class AdminstratorDashboard extends JFrame implements LibWindow {
         // create main panels
         createMainPanels();
 
-        // True
+        // link my sidebar
         linkList.addListSelectionListener(event -> {
             String value = linkList.getSelectedValue().getItemName();
             boolean allowed = linkList.getSelectedValue().highlight();
@@ -63,57 +71,155 @@ public class AdminstratorDashboard extends JFrame implements LibWindow {
             cl.show(cards, value);
         });
 
-        mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
-
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                linkList, cards);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, linkList, cards);
         splitPane.setDividerLocation(200);
-        add(splitPane, BorderLayout.CENTER);
 
+        mainPanel = new JPanel(new FlowLayout());
+        mainPanel.add(splitPane);
+
+        add(mainPanel);
         isInitialized = true;
+
 
     }
 
     public void createMainPanels() {
-        // item1 panel
 
-        JPanel panel1 = new JPanel();
-        JLabel label = new JLabel("Add New member");
-        panel1.add(label);
-        // item2 panel
+        // Add member panel
+        addMemberForm();
 
-        JPanel panel2 = new JPanel();
-        JLabel label2 = new JLabel("Add New Book");
-        panel2.add(label2);
+        // Add panel
+        addBookForm();
 
-        JPanel panel3 = new JPanel();
-        JLabel label3 = new JLabel("Add New copy");
-        panel3.add(label3);
+        // Add copy panel
+        addBookCopyForm();
 
         cards = new JPanel(new CardLayout());
-        cards.add(panel1, item1.getItemName());
-        cards.add(panel2, item2.getItemName());
-        cards.add(panel3, item3.getItemName());
+        cards.add(addMemberPanel, item1.getItemName());
+        cards.add(addBookPanel, item2.getItemName());
+        cards.add(addCopyPanel, item3.getItemName());
 
     }
 
-    public void defineTopPanel() {
-        topPanel = new JPanel();
-        JLabel AllIDsLabel = new JLabel("All Book IDs");
-        Util.adjustLabelFont(AllIDsLabel, Util.DARK_BLUE, true);
-        topPanel.setLayout(new BorderLayout());
-        topPanel.add(AllIDsLabel);
+    private void addBookForm() {
+
+        addBookPanel = new JPanel(new BorderLayout());
+        JLabel panelTitle = new JLabel(" Add Book");
+
+        panelTitle.setFont(Config.DEFUALT_FONT);
+
+        panelTitle.setForeground(Util.LINK_AVAILABLE);
+
+        addBookPanel.add(panelTitle, BorderLayout.NORTH);
+
+        JPanel bookFormPanel = createAddBookForm();
+
+        addBookPanel.add(bookFormPanel, BorderLayout.SOUTH);
+
+        // add add button
+        JButton addBookBtn = new JButton("Add Book");
+        addBookBtn.addActionListener(new addBookListiner());
+
+//        JPanel addBookBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+//        addBookBtnPanel.add(addBookBtn);
+
+        // add to book Panel at the bottom
+        addBookPanel.add(addBookBtn, BorderLayout.SOUTH);
+
     }
 
-    class BackToMainListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-            LibrarySystem.hideAllWindows();
-            LibrarySystem.INSTANCE.setVisible(true);
+    private void addMemberForm() {
 
+        addMemberPanel = new JPanel(new BorderLayout());
+        JLabel panelTitle = new JLabel(" Add Book");
+        panelTitle.setFont(Config.DEFUALT_FONT);
+        panelTitle.setForeground(Util.LINK_AVAILABLE);
+
+        addMemberPanel.add(panelTitle , BorderLayout.NORTH);
+
+        JPanel memberFormPanel = createAddBookForm();
+
+        addMemberPanel.add(memberFormPanel , BorderLayout.CENTER);
+
+        // add add button
+        JButton addBookBtn = new JButton("Add Book");
+        addBookBtn.addActionListener(new addBookListiner());
+        JPanel addBookBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        addBookBtnPanel.add(addBookBtn);
+
+        // add to book Panel at the bottom
+        memberFormPanel.add(addBookBtnPanel, BorderLayout.SOUTH);
+    }
+
+    private void addBookCopyForm() {
+
+        addCopyPanel = new JPanel(new BorderLayout());
+        JLabel panelTitle = new JLabel(" Add Book");
+        panelTitle.setFont(Config.DEFUALT_FONT);
+        panelTitle.setForeground(Util.LINK_AVAILABLE);
+
+        addCopyPanel.add(panelTitle , BorderLayout.NORTH);
+
+        JPanel memberFormPanel = createAddBookForm();
+
+        addCopyPanel.add(memberFormPanel , BorderLayout.CENTER);
+
+        // add add button
+        JButton addBookBtn = new JButton("Add Book");
+        addBookBtn.addActionListener(new addBookListiner());
+        JPanel addBookBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        addBookBtnPanel.add(addBookBtn);
+
+        // add to book Panel at the bottom
+        addCopyPanel.add(addBookBtnPanel, BorderLayout.SOUTH);
+    }
+
+    public void addBookPanel(){
+
+        addBookPanel = new JPanel(new BorderLayout());
+        JLabel panelTitle = new JLabel(" Add Book");
+        panelTitle.setFont(Config.DEFUALT_FONT);
+        panelTitle.setForeground(Util.LINK_AVAILABLE);
+
+        addBookPanel.add(panelTitle , BorderLayout.NORTH);
+
+        JPanel bookFormPanel = createAddBookForm();
+
+        addBookPanel.add(bookFormPanel , BorderLayout.CENTER);
+
+        // add add button
+        JButton addBookBtn = new JButton("Add Book");
+        addBookBtn.addActionListener(new addBookListiner());
+        JPanel addBookBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        addBookBtnPanel.add(addBookBtn);
+
+        // add to book Panel at the bottom
+        addBookPanel.add(addBookBtnPanel, BorderLayout.SOUTH);
+    }
+
+    private JPanel getElementWithLabel(String labelName, JTextField[] fields, int jtextFieldIndex) {
+
+        JLabel label = new JLabel(" " + labelName);
+        fields[jtextFieldIndex] = new JTextField(20);
+        JPanel nameForm = new JPanel(new BorderLayout());
+        nameForm.add(label, BorderLayout.NORTH);
+        nameForm.add(fields[jtextFieldIndex], BorderLayout.CENTER);
+
+        return nameForm;
+
+    }
+
+    private JPanel createAddBookForm() {
+
+        JPanel bookFormPanel = new JPanel(new GridLayout(bookAttributes.length, 0));
+
+        for (int i = 0; i < bookFields.length; i++) {
+            bookFormPanel.add(getElementWithLabel(bookAttributes[i], bookFields, i));
         }
+
+        return bookFormPanel;
     }
+
 
     @Override
     public boolean isInitialized() {
@@ -172,7 +278,6 @@ public class AdminstratorDashboard extends JFrame implements LibWindow {
         {
            AdminstratorDashboard.INSTANCE.setTitle(Config.APP_NAME);
             AdminstratorDashboard.INSTANCE.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
             AdminstratorDashboard.INSTANCE.init();
             centerFrameOnDesktop(AdminstratorDashboard.INSTANCE);
             AdminstratorDashboard.INSTANCE.setVisible(true);
@@ -187,4 +292,28 @@ public class AdminstratorDashboard extends JFrame implements LibWindow {
         int frameWidth = f.getSize().width;
         f.setLocation(((width - frameWidth) / 2), (height - frameHeight) / 3);
     }
+
+    private class addBookListiner implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            String firstName = bookFields[0].getText().trim();
+            String lastName = bookFields[1].getText().trim();
+            String bookTitle = bookFields[2].getText().trim();
+
+//            if(firstName.isEmpty() || lastName.isEmpty() || bookTitle.isEmpty()){
+//                statusBar.setText("All fields are required");
+//                statusBar.setForeground(Color.red);
+//            }else{
+//                Data.addBookTitle(bookTitle);
+//                viewTitlesPanel.add(new JList<String>(Data.bookTitles.toArray(new String[Data.bookTitles.size()])));
+//                System.out.println(Data.bookTitles.toString());
+//                statusBar.setText("The book  has been added to the collection!");
+//                statusBar.setForeground(Color.green);
+//            }
+
+        }
+    }
+
+
 }

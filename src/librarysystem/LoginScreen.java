@@ -17,7 +17,6 @@ public class LoginScreen extends JFrame implements LibWindow {
 
     @Override
     public void init() {
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         this.setVisible(true);
         this.setLayout(null);

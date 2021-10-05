@@ -11,10 +11,10 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 
-public class AdminstratorDashboard extends JFrame implements LibWindow {
+public class AdministratorsDashboard extends JFrame implements LibWindow {
 
     private static final long serialVersionUID = 1L;
-    public static final AdminstratorDashboard INSTANCE = new AdminstratorDashboard();
+    public static final AdministratorsDashboard INSTANCE = new AdministratorsDashboard();
     ControllerInterface ci = new SystemController();
     private boolean isInitialized = false;
 
@@ -41,7 +41,7 @@ public class AdminstratorDashboard extends JFrame implements LibWindow {
     ListItem item1, item2 , item3;
 
     //Singleton class
-    private AdminstratorDashboard() {
+    private AdministratorsDashboard() {
 
         setSize(Config.APP_WIDTH, Config.APP_WIDTH);
         sideBarItems = new String[]{"Add New Member", "Add New Book", "Add Copy"};
@@ -73,6 +73,11 @@ public class AdminstratorDashboard extends JFrame implements LibWindow {
             }
             cl.show(cards, value);
         });
+        linkList.setBackground(new java.awt.Color(204, 204, 255));
+        linkList.setVisibleRowCount(4);
+        linkList.setFixedCellHeight(40);
+        linkList.setSelectionForeground(Color.BLACK);
+
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, linkList, cards);
         splitPane.setDividerLocation(200);
@@ -110,8 +115,6 @@ public class AdminstratorDashboard extends JFrame implements LibWindow {
         JLabel panelTitle = new JLabel(" Add Book");
 
         panelTitle.setFont(Config.DEFUALT_FONT);
-
-        panelTitle.setForeground(Util.LINK_AVAILABLE);
 
         addBookPanel.add(panelTitle, BorderLayout.NORTH);
 
@@ -278,11 +281,11 @@ public class AdminstratorDashboard extends JFrame implements LibWindow {
     public static void main(String[] args) {
         EventQueue.invokeLater(() ->
         {
-           AdminstratorDashboard.INSTANCE.setTitle(Config.APP_NAME);
-            AdminstratorDashboard.INSTANCE.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            AdminstratorDashboard.INSTANCE.init();
-            centerFrameOnDesktop(AdminstratorDashboard.INSTANCE);
-            AdminstratorDashboard.INSTANCE.setVisible(true);
+           AdministratorsDashboard.INSTANCE.setTitle(Config.APP_NAME);
+            AdministratorsDashboard.INSTANCE.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            AdministratorsDashboard.INSTANCE.init();
+            centerFrameOnDesktop(AdministratorsDashboard.INSTANCE);
+            AdministratorsDashboard.INSTANCE.setVisible(true);
         });
     }
 

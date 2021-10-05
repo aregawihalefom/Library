@@ -1,14 +1,14 @@
 package librarysystem;
 
 import business.*;
-import business.exceptions.BookCopyException;
 import business.exceptions.LibraryMemberException;
+import librarysystem.guiElements.BookGui;
+import librarysystem.guiElements.MemberGui;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,12 +30,7 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
     JList<ListItem> linkList;
     JPanel cards;
 
-    private String[] bookAttributes = {"Title", "ISBN", "Max days" , "Authors" };
-    private String[] memeberAttributes = {"Member Number", "First Name", "Last Name", "Phone Number"};
     private String[] copyAttributes = {"Copy Number", "Book ISBN"};
-
-    private JTextField[] bookFields = new JTextField[bookAttributes.length];
-    private JTextField[] memberFields = new JTextField[memeberAttributes.length];
     private JTextField[] copyFields = new JTextField[copyAttributes.length];
 
     public static  String[] sideBarItems;
@@ -101,10 +96,10 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
         addAdmindDashBoardPanel();
 
         // Add member panel
-        addMemberForm();
+        addMemberPanel = MemberGui.INSTANCE.getAddMemberPanel();
 
-        // Add panel
-        addBookForm();
+        // Add paaddBookForm()
+        addBookPanel = BookGui.INSTANCE.getAddBookPanel();
 
         // Add copy panel
         addBookCopyForm();
@@ -121,9 +116,8 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
 
         adminDashobardPanel = new JPanel(new BorderLayout());
         adminDashobardPanel.add(new JLabel("Admin dashboard"), BorderLayout.NORTH);
-        JScrollPane memberListPanel = createMemberListPanel();
-        JScrollPane bookListPanel = createBookListPanel();
-
+        JScrollPane memberListPanel = MemberGui.INSTANCE.createMemberListPanel();
+        JScrollPane bookListPanel = BookGui.INSTANCE.createBookListPanel();;
 
         JPanel p3=new JPanel();
         JLabel bookList =new JLabel("Book  copy List");
@@ -141,172 +135,28 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
 
     }
 
-    private JScrollPane createBookListPanel() {
-
-        String data[][]={ {"100","Amit","670000", "1212"},
-                {"102","Jai","780000", "1212312"},
-                {"101","Sachin","700000", "2345314"}};
-        String column[]={"Member ID","First Name","Last Name", "Phone Number"};
-        JTable jt=new JTable(data,column);
-        //jt.setBounds(30,40,200,300);
-        JScrollPane sp=new JScrollPane(jt);
-
-        return sp;
-    }
-
-    private void addBookForm() {
-
-        addBookPanel = new JPanel(new BorderLayout());
-        JLabel panelTitle = new JLabel(" Add Book");
-
-        JPanel panelTitlePanel = new JPanel(new BorderLayout());
-        panelTitlePanel.add(panelTitle);
-
-        panelTitle.setFont(Config.DEFUALT_FONT);
-
-
-        addBookPanel.add(panelTitle, BorderLayout.NORTH);
-
-        JPanel bookFormPanel = createAddBookForm();
-
-        addBookPanel.add(bookFormPanel, BorderLayout.SOUTH);
-
-        // add add button
-        JButton addBookBtn = new JButton("Add Book");
-        addBookBtn.addActionListener(new addBookListiner());
-
-//        JPanel addBookBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-//        addBookBtnPanel.add(addBookBtn);
-
-        // add to book Panel at the bottom
-        addBookPanel.add(addBookBtn, BorderLayout.SOUTH);
-
-    }
-
-    private void addMemberForm() {
-
-        addMemberPanel = new JPanel(new BorderLayout());
-        JLabel panelTitle = new JLabel(" Add Member");
-        panelTitle.setFont(Config.DEFUALT_FONT);
-        panelTitle.setForeground(Util.DARK_BLUE);
-
-        addMemberPanel.add(panelTitle , BorderLayout.NORTH);
-
-        JPanel memberFormPanel = createMemberForm();
-
-        addMemberPanel.add(memberFormPanel , BorderLayout.CENTER);
-
-        // add add button
-        JButton addBMemberBtn = new JButton("Add Member");
-        addBMemberBtn.addActionListener(new addMemberListiner());
-        JPanel addBMemberBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        addBMemberBtnPanel.add(addBMemberBtn);
-
-        // add to book Panel at the bottom
-        memberFormPanel.add(addBMemberBtn, BorderLayout.SOUTH);
-    }
-
-    private JScrollPane createMemberListPanel(){
-
-        String column[]={"MEMBER NO.","FULL NAME","PHONE NO.", "Address"};
-        HashMap<String , LibraryMember> memberHashMap = ci.getMembers();
-        System.out.println(memberHashMap.size());
-        String memberData [][] = new String[memberHashMap.size()][4];
-
-        List<String> memberID = ci.allMemberIds();
-
-        for(int i = 0 ; i < memberHashMap.size(); i++){
-
-
-            LibraryMember member = memberHashMap.get(memberID.get(i));
-            System.out.println(member.toString());
-            memberData[i][0] = member.getMemberId();
-            memberData[i][1] = member.getFirstName() + " " + member.getLastName();
-            memberData[i][2] = member.getTelephone();
-            memberData[i][3] = member.getAddress() != null ? member.getAddress().toString() : "";
-        }
-
-        JTable jt=new JTable(memberData,column);
-        JScrollPane sp=new JScrollPane(jt);
-        return sp;
-    }
-
-    private JPanel createMemberForm() {
-
-        JPanel memberFormPanel = new JPanel(new FlowLayout());
-        for (int i = 0; i < memberFields.length; i++) {
-            memberFormPanel.add(getElementWithLabelMember(memeberAttributes[i], i));
-        }
-        return memberFormPanel;
-    }
-
     private void addBookCopyForm() {
 
-        addCopyPanel = new JPanel(new BorderLayout());
-        JLabel panelTitle = new JLabel(" Add Book");
-        panelTitle.setFont(Config.DEFUALT_FONT);
-        panelTitle.setForeground(Util.LINK_AVAILABLE);
-
-        addCopyPanel.add(panelTitle , BorderLayout.NORTH);
-
-        JPanel memberFormPanel = createAddBookForm();
-
-        addCopyPanel.add(memberFormPanel , BorderLayout.CENTER);
+       addCopyPanel = new JPanel(new BorderLayout());
+//        JLabel panelTitle = new JLabel(" Add Book");
+//        panelTitle.setFont(Config.DEFUALT_FONT);
+//        panelTitle.setForeground(Util.LINK_AVAILABLE);
+//
+//        addCopyPanel.add(panelTitle , BorderLayout.NORTH);
+//
+//        JPanel memberFormPanel = createAddBookForm();
+//
+//        addCopyPanel.add(memberFormPanel , BorderLayout.CENTER);
 
         // add add button
         JButton addBookBtn = new JButton("Add Book");
-        addBookBtn.addActionListener(new addBookListiner());
+       // addBookBtn.addActionListener(new addBookListiner());
         JPanel addBookBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         addBookBtnPanel.add(addBookBtn);
 
         // add to book Panel at the bottom
         addCopyPanel.add(addBookBtnPanel, BorderLayout.SOUTH);
     }
-
-
-    private JPanel getElementWithLabelBook(String labelName, int jtextFieldIndex) {
-
-        JLabel label = new JLabel(" " + labelName);
-        JPanel labelPanel = new JPanel(new BorderLayout());
-        labelPanel.add(label, BorderLayout.NORTH);
-
-        bookFields[jtextFieldIndex] = new JTextField(20);
-        JPanel formPanel = new JPanel(new BorderLayout());
-        formPanel.add(bookFields[jtextFieldIndex], BorderLayout.NORTH);
-
-        JPanel nameForm = new JPanel(new BorderLayout());
-        nameForm.add(labelPanel, BorderLayout.NORTH);
-        nameForm.add(formPanel, BorderLayout.CENTER);
-
-        return nameForm;
-    }
-
-    private JPanel getElementWithLabelMember(String labelName, int jtextFieldIndex) {
-
-        JLabel label = new JLabel(" " + labelName);
-        JPanel labelPanel = new JPanel(new BorderLayout());
-        labelPanel.add(label, BorderLayout.NORTH);
-
-        memberFields[jtextFieldIndex] = new JTextField(20);
-        JPanel formPanel = new JPanel(new BorderLayout());
-        formPanel.add(memberFields[jtextFieldIndex], BorderLayout.NORTH);
-
-        JPanel nameForm = new JPanel(new BorderLayout());
-        nameForm.add(labelPanel, BorderLayout.NORTH);
-        nameForm.add(formPanel, BorderLayout.CENTER);
-
-        return nameForm;
-    }
-
-    private JPanel createAddBookForm() {
-
-        JPanel bookFormPanel = new JPanel(new FlowLayout());
-        for (int i = 0; i < bookFields.length; i++) {
-            bookFormPanel.add(getElementWithLabelBook(bookAttributes[i], i));
-        }
-        return bookFormPanel;
-    }
-
 
     @Override
     public boolean isInitialized() {
@@ -381,72 +231,9 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
         f.setLocation(((width - frameWidth) / 2), (height - frameHeight) / 3);
     }
 
-    private class addBookListiner implements ActionListener  {
-        @Override
-        public void actionPerformed(ActionEvent e) throws NumberFormatException {
-
-//            Author author = null;
-//            for(int i = 0 ; i < bookFields.length; i++){
-//
-//                if(isEmptyString(bookFields[i].getText())){
-//                    new Messages.InnerFrame().showMessage("All fields should be nonempty", "Error");
-//                    System.out.println("This is not working");
-//                    return;
-//                }
-//            }
-            try {
-
-                String title = bookFields[0].getText().trim();
-                System.out.println("Title ="+title);
-                String isbn = bookFields[1].getText().trim();
-
-                int maxBorrowDays = Integer.parseInt(bookFields[2].getText());
-
-                Book book = new Book(isbn, title, maxBorrowDays, new ArrayList<>());
-                boolean status = ci.addBook(book);
-                new Messages.InnerFrame().showMessage("New book added successfully","Info");
-                System.out.println(ci.allBookIds().toString());
-
-            } catch (BookCopyException ex) {
-                new Messages.InnerFrame().showMessage(ex.getMessage(), "Error");
-            }catch (NumberFormatException ex){
-                new Messages.InnerFrame().showMessage("Input for Max days should be a number", "Error");
-            }
-
-        }
-    }
-
-    private class addMemberListiner implements  ActionListener{
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-
-            for(JTextField input : memberFields){
-                if(isEmptyString(input.getText())){
-                    new Messages.InnerFrame().showMessage("All fields should be nonempty", "Error");
-                    break;
-                }
-            }
-
-            try {
-                LibraryMember member = new LibraryMember(memberFields[0].getText(), memberFields[1].getText(),
-                        memberFields[2].getText(), memberFields[3].getText(), null);
-                System.out.println(ci.allMemberIds().toString());
-                boolean status = ci.addMember(member);
-                if(!status) throw new LibraryMemberException("Member Id is already taken");
-                new Messages.InnerFrame().showMessage("Member added Successfully", "Info");
-                System.out.println(ci.allMemberIds().toString());
-            } catch (LibraryMemberException ex) {
-                new Messages.InnerFrame().showMessage(ex.getMessage(), "Error");
-            }
-        }
-    }
 
     public boolean isEmptyString(String str){
-
         return str.equals("");
     }
-
-
 
 }

@@ -114,7 +114,11 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
         addBookPanel = new JPanel(new BorderLayout());
         JLabel panelTitle = new JLabel(" Add Book");
 
+        JPanel panelTitlePanel = new JPanel(new BorderLayout());
+        panelTitlePanel.add(panelTitle);
+
         panelTitle.setFont(Config.DEFUALT_FONT);
+
 
         addBookPanel.add(panelTitle, BorderLayout.NORTH);
 
@@ -180,48 +184,30 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
         addCopyPanel.add(addBookBtnPanel, BorderLayout.SOUTH);
     }
 
-    public void addBookPanel(){
 
-        addBookPanel = new JPanel(new BorderLayout());
-        JLabel panelTitle = new JLabel(" Add Book");
-        panelTitle.setFont(Config.DEFUALT_FONT);
-        panelTitle.setForeground(Util.LINK_AVAILABLE);
-
-        addBookPanel.add(panelTitle , BorderLayout.NORTH);
-
-        JPanel bookFormPanel = createAddBookForm();
-
-        addBookPanel.add(bookFormPanel , BorderLayout.CENTER);
-
-        // add add button
-        JButton addBookBtn = new JButton("Add Book");
-        addBookBtn.addActionListener(new addBookListiner());
-        JPanel addBookBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        addBookBtnPanel.add(addBookBtn);
-
-        // add to book Panel at the bottom
-        addBookPanel.add(addBookBtnPanel, BorderLayout.SOUTH);
-    }
-
-    private JPanel getElementWithLabel(String labelName, JTextField[] fields, int jtextFieldIndex) {
+    private JPanel getElementWithLabel(String labelName, int jtextFieldIndex) {
 
         JLabel label = new JLabel(" " + labelName);
-        fields[jtextFieldIndex] = new JTextField(20);
+        JPanel labelPanel = new JPanel(new BorderLayout());
+        labelPanel.add(label, BorderLayout.NORTH);
+
+        bookFields[jtextFieldIndex] = new JTextField(20);
+        JPanel formPanel = new JPanel(new BorderLayout());
+        formPanel.add(bookFields[jtextFieldIndex], BorderLayout.NORTH);
+
         JPanel nameForm = new JPanel(new BorderLayout());
-        nameForm.add(label, BorderLayout.NORTH);
-        nameForm.add(fields[jtextFieldIndex], BorderLayout.CENTER);
+        nameForm.add(labelPanel, BorderLayout.NORTH);
+        nameForm.add(formPanel, BorderLayout.CENTER);
 
         return nameForm;
     }
 
     private JPanel createAddBookForm() {
 
-        JPanel bookFormPanel = new JPanel(new GridLayout(bookAttributes.length, 0));
-
+        JPanel bookFormPanel = new JPanel(new FlowLayout());
         for (int i = 0; i < bookFields.length; i++) {
-            bookFormPanel.add(getElementWithLabel(bookAttributes[i], bookFields, i));
+            bookFormPanel.add(getElementWithLabel(bookAttributes[i], i));
         }
-
         return bookFormPanel;
     }
 
@@ -298,37 +284,32 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
         f.setLocation(((width - frameWidth) / 2), (height - frameHeight) / 3);
     }
 
-    private class addBookListiner implements ActionListener {
+    private class addBookListiner implements ActionListener  {
         @Override
         public void actionPerformed(ActionEvent e) {
 
-            String title = bookFields[0].getText().trim();
-            String isbn = bookFields[1].getText().trim();
-            int maxBorrowDays = Integer.parseInt(bookFields[2].getText());
-
             Author author = null;
-
             for(JTextField input : bookFields){
+                System.out.println(input.getText());
                 if(isEmptyString(input.getText())){
                     new Messages.InnerFrame().showMessage("All fields should be nonempty", "Error");
-                    break;
-                }else{
-
-                    try {
-
-                        Book book = new Book(isbn, title, maxBorrowDays, new ArrayList<>());
-                        boolean status = ci.addBook(book);
-                        if(status) throw new LibraryMemberException("Member Id is already taken");
-
-                    } catch (LibraryMemberException | BookCopyException ex) {
-                        new Messages.InnerFrame().showMessage(ex.getMessage(), "Error");
-                    }
+                    return;
                 }
             }
+            try {
 
+                String title = bookFields[0].getText().trim();
+                String isbn = bookFields[1].getText().trim();
+                int maxBorrowDays = Integer.parseInt(bookFields[2].getText());
 
+                Book book = new Book(isbn, title, maxBorrowDays, new ArrayList<>());
+                boolean status = ci.addBook(book);
+                new Messages.InnerFrame().showMessage("New book added successfully","Info");
+                System.out.println(ci.allBookIds().toString());
 
-
+            } catch (BookCopyException ex) {
+                new Messages.InnerFrame().showMessage(ex.getMessage(), "Error");
+            }
 
         }
     }

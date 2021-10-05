@@ -1,12 +1,14 @@
 package librarysystem;
 
-import business.ControllerInterface;
-import business.SystemController;
+import business.*;
+import business.exceptions.BookCopyException;
+import business.exceptions.LibraryMemberException;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 
 public class AdminstratorDashboard extends JFrame implements LibWindow {
@@ -21,10 +23,11 @@ public class AdminstratorDashboard extends JFrame implements LibWindow {
     private JPanel addCopyPanel;
     private JPanel mainPanel;
 
+
     JList<ListItem> linkList;
     JPanel cards;
 
-    private String[] bookAttributes = {"Title", "ISBN", "Max days" , "Authors"};
+    private String[] bookAttributes = {"Title", "ISBN", "Max days" , "Authors" };
     private String[] memeberAttributes = {"Member Number", "First Name", "Last Name", "Phone Number"};
     private String[] copyAttributes = {"Copy Number", "Book ISBN"};
 
@@ -77,7 +80,7 @@ public class AdminstratorDashboard extends JFrame implements LibWindow {
         mainPanel = new JPanel(new FlowLayout());
         mainPanel.add(splitPane);
 
-        add(mainPanel);
+        add(splitPane);
         isInitialized = true;
 
 
@@ -206,7 +209,6 @@ public class AdminstratorDashboard extends JFrame implements LibWindow {
         nameForm.add(fields[jtextFieldIndex], BorderLayout.CENTER);
 
         return nameForm;
-
     }
 
     private JPanel createAddBookForm() {
@@ -297,23 +299,67 @@ public class AdminstratorDashboard extends JFrame implements LibWindow {
         @Override
         public void actionPerformed(ActionEvent e) {
 
-            String firstName = bookFields[0].getText().trim();
-            String lastName = bookFields[1].getText().trim();
-            String bookTitle = bookFields[2].getText().trim();
+            String title = bookFields[0].getText().trim();
+            String isbn = bookFields[1].getText().trim();
+            int maxBorrowDays = Integer.parseInt(bookFields[2].getText());
 
-//            if(firstName.isEmpty() || lastName.isEmpty() || bookTitle.isEmpty()){
-//                statusBar.setText("All fields are required");
-//                statusBar.setForeground(Color.red);
-//            }else{
-//                Data.addBookTitle(bookTitle);
-//                viewTitlesPanel.add(new JList<String>(Data.bookTitles.toArray(new String[Data.bookTitles.size()])));
-//                System.out.println(Data.bookTitles.toString());
-//                statusBar.setText("The book  has been added to the collection!");
-//                statusBar.setForeground(Color.green);
-//            }
+            Author author = null;
+
+            for(JTextField input : bookFields){
+                if(isEmptyString(input.getText())){
+                    new Messages.InnerFrame().showMessage("All fields should be nonempty", "Error");
+                    break;
+                }else{
+
+                    try {
+
+                        Book book = new Book(isbn, title, maxBorrowDays, new ArrayList<>());
+                        boolean status = ci.addBook(book);
+                        if(status) throw new LibraryMemberException("Member Id is already taken");
+
+                    } catch (LibraryMemberException | BookCopyException ex) {
+                        new Messages.InnerFrame().showMessage(ex.getMessage(), "Error");
+                    }
+                }
+            }
+
+
+
+
 
         }
     }
+
+    private class addMemberListiner implements  ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            for(JTextField input : memberFields){
+                if(isEmptyString(input.getText())){
+                    new Messages.InnerFrame().showMessage("All fields should be nonempty", "Error");
+                    break;
+                }else{
+
+                    try {
+                        LibraryMember member = new LibraryMember(memberFields[0].getText(), memberFields[1].getText(),
+                                                                 memberFields[2].getText(), memberFields[3].getText(), null);
+                        boolean status = ci.addMember(member);
+                        if(status) throw new LibraryMemberException("Member Id is already taken");
+
+                    } catch (LibraryMemberException ex) {
+                       new Messages.InnerFrame().showMessage(ex.getMessage(), "Error");
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean isEmptyString(String str){
+
+        return str.equals("");
+    }
+
 
 
 }

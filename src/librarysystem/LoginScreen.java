@@ -129,6 +129,7 @@ public class LoginScreen extends JFrame implements LibWindow {
                 char[] pass = jTFPassword.getPassword();
                 String password = new String(pass);
                 sys.login(username,password);
+                System.out.println(sys.allBookIds().toString());
             }catch(LoginException ex){
 
                 JOptionPane.showMessageDialog(this,ex.getMessage());

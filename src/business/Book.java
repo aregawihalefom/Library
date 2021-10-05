@@ -25,7 +25,6 @@ final public class Book implements Serializable {
 		this.authors = Collections.unmodifiableList(authors);
 		copies = new BookCopy[]{new BookCopy(this, 1, true)};	
 	}
-	
 	public void updateCopies(BookCopy copy) {
 		for(int i = 0; i < copies.length; ++i) {
 			BookCopy c = copies[i];
@@ -109,6 +108,7 @@ final public class Book implements Serializable {
 		}
 		return null;
 	}
+
 	public int getMaxCheckoutLength() {
 		return maxCheckoutLength;
 	}

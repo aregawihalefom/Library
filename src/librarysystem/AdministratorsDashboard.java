@@ -1,39 +1,40 @@
 package librarysystem;
 
 import business.*;
-import business.exceptions.LibraryMemberException;
 import librarysystem.guiElements.BookGui;
 import librarysystem.guiElements.MemberGui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.List;
 
 
 public class AdministratorsDashboard extends JFrame implements LibWindow {
 
     private static final long serialVersionUID = 1L;
-    public static final AdministratorsDashboard INSTANCE = new AdministratorsDashboard();
+    public static  AdministratorsDashboard INSTANCE = new AdministratorsDashboard();
     ControllerInterface ci = new SystemController();
     private boolean isInitialized = false;
 
-    private JPanel addBookPanel;
-    private JPanel addMemberPanel;
-    private JPanel addCopyPanel;
-    private JPanel adminDashobardPanel;
-    private JPanel mainPanel;
+    private  JPanel addBookPanel;
+    private  JPanel addMemberPanel;
+    private  JPanel addCopyPanel;
 
+    private static JScrollPane memberListPanel;
+    private static JScrollPane bookListPanel;
+
+
+    private  JPanel adminDashobardPanel;
+    private  JPanel mainPanel;
+    private static MemberGui memberGui = MemberGui.INSTANCE;
 
     JList<ListItem> linkList;
     JPanel cards;
 
     private String[] copyAttributes = {"Copy Number", "Book ISBN"};
     private JTextField[] copyFields = new JTextField[copyAttributes.length];
-
     public static  String[] sideBarItems;
+
+    private JTable jTable;
 
     // list items which will be added to the ListModel for linkList
     ListItem item1, item2 , item3, item4;
@@ -96,7 +97,7 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
         addAdmindDashBoardPanel();
 
         // Add member panel
-        addMemberPanel = MemberGui.INSTANCE.getAddMemberPanel();
+        addMemberPanel = memberGui.getAddMemberPanel();
 
         // Add paaddBookForm()
         addBookPanel = BookGui.INSTANCE.getAddBookPanel();
@@ -112,12 +113,13 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
 
     }
 
-    private void addAdmindDashBoardPanel() {
+    public void addAdmindDashBoardPanel() {
 
         adminDashobardPanel = new JPanel(new BorderLayout());
         adminDashobardPanel.add(new JLabel("Admin dashboard"), BorderLayout.NORTH);
-        JScrollPane memberListPanel = MemberGui.INSTANCE.createMemberListPanel();
-        JScrollPane bookListPanel = BookGui.INSTANCE.createBookListPanel();;
+
+        memberListPanel = MemberGui.INSTANCE.getMemberList();
+        bookListPanel = BookGui.INSTANCE.getBookList();;
 
         JPanel p3=new JPanel();
         JLabel bookList =new JLabel("Book  copy List");
@@ -138,15 +140,6 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
     private void addBookCopyForm() {
 
        addCopyPanel = new JPanel(new BorderLayout());
-//        JLabel panelTitle = new JLabel(" Add Book");
-//        panelTitle.setFont(Config.DEFUALT_FONT);
-//        panelTitle.setForeground(Util.LINK_AVAILABLE);
-//
-//        addCopyPanel.add(panelTitle , BorderLayout.NORTH);
-//
-//        JPanel memberFormPanel = createAddBookForm();
-//
-//        addCopyPanel.add(memberFormPanel , BorderLayout.CENTER);
 
         // add add button
         JButton addBookBtn = new JButton("Add Book");
@@ -231,9 +224,8 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
         f.setLocation(((width - frameWidth) / 2), (height - frameHeight) / 3);
     }
 
+    public static  void updateMemberList(){
+        memberListPanel = MemberGui.INSTANCE.getMemberList();
 
-    public boolean isEmptyString(String str){
-        return str.equals("");
     }
-
 }

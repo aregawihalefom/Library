@@ -6,8 +6,6 @@ import java.util.List;
 import business.exceptions.BookCopyException;
 import business.exceptions.LibraryMemberException;
 
-import javax.swing.*;
-
 public interface ControllerInterface {
 	public void login(String id, String password) throws LoginException;
 	public List<String> allMemberIds();
@@ -17,4 +15,8 @@ public interface ControllerInterface {
 	public boolean addBookCopy(String ISBN , int copyNumber) throws BookCopyException;
 
 	public HashMap<String, LibraryMember> getMembers();
+    public HashMap<String, Book> getBooks();
+	public LibraryMember checkMemberId(String member_id);
+
+	Book checkBookISBN(String isbn);
 }

@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import business.Address;
-import business.Author;
-import business.Book;
-import business.LibraryMember;
+import business.*;
 
 /**
  * This class loads data into the data repository and also
@@ -28,8 +25,8 @@ public class TestData {
 		td.libraryMemberData();
 		td.userData();
 		DataAccess da = new DataAccessFacade();
-		System.out.println(da.readBooksMap());
-		System.out.println(da.readUserMap());
+		//System.out.println(da.readBooksMap());
+		//System.out.println(da.readUserMap());
 	}
 	///create books
 	public void bookData() {
@@ -48,6 +45,9 @@ public class TestData {
 	
 	//create library members
 	public void libraryMemberData() {
+
+
+		CheckOutRecord record = new CheckOutRecord();
 		LibraryMember libraryMember = new LibraryMember("1001", "Andy", "Rogers", "641-223-2211", addresses.get(4));
 		members.add(libraryMember);
 		libraryMember = new LibraryMember("1002", "Drew", "Stevens", "702-998-2414", addresses.get(5));

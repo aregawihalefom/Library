@@ -1,6 +1,6 @@
-package lesson5.lecture.factorymethods2.rulesets;
+package librarysystem.ruleSet;
 
-import java.awt.Component;
+import java.awt.*;
 
 public interface RuleSet {
 	public void applyRules(Component ob) throws RuleException;

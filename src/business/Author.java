@@ -13,5 +13,10 @@ final public class Author extends Person implements Serializable {
 		this.bio = bio;
 	}
 
+	@Override
+	public String toString() {
+		return getFirstName() + " " + getLastName();
+	}
+
 	private static final long serialVersionUID = 7508481940058530471L;
 }

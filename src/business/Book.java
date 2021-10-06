@@ -23,7 +23,7 @@ final public class Book implements Serializable {
 		this.title = title;
 		this.maxCheckoutLength = maxCheckoutLength;
 		this.authors = Collections.unmodifiableList(authors);
-		copies = new BookCopy[]{new BookCopy(this, 1, true)};	
+		copies = new BookCopy[]{new BookCopy(this, 1, true)};
 	}
 	public void updateCopies(BookCopy copy) {
 		for(int i = 0; i < copies.length; ++i) {
@@ -50,7 +50,6 @@ final public class Book implements Serializable {
 		newArr[copies.length] = new BookCopy(this, copies.length +1, true);
 		copies = newArr;
 	}
-	
 	
 	@Override
 	public boolean equals(Object ob) {

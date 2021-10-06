@@ -1,18 +1,22 @@
-package lesson5.lecture.factorymethods2.rulesets;
+package librarysystem.ruleSet;
 
-import java.awt.Component;
+import librarysystem.LoginScreen;
+import librarysystem.guiElements.BookGui;
+import librarysystem.guiElements.CheckOutGui;
+import librarysystem.guiElements.MemberGui;
+
+import java.awt.*;
 import java.util.HashMap;
-
-import lesson5.lecture.factorymethods2.gui.AddrWindow;
-import lesson5.lecture.factorymethods2.gui.ProfileWindow;
 
 
 final public class RuleSetFactory {
 	private RuleSetFactory(){}
 	static HashMap<Class<? extends Component>, RuleSet> map = new HashMap<>();
 	static {
-		map.put(AddrWindow.class, new AddressRuleSet());
-		map.put(ProfileWindow.class, new CustomerProfileRuleSet());
+		map.put(BookGui.class, new BookRuleSet());
+		map.put(MemberGui.class, new MemberRuleSet());
+		map.put(LoginScreen.class, new LoginRuleSet());
+		map.put(CheckOutGui.class, new CheckOutRuleSet());
 	}
 	public static RuleSet getRuleSet(Component c) {
 		Class<? extends Component> cl = c.getClass();

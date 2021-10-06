@@ -2,49 +2,55 @@ package librarysystem.guiElements;
 
 import business.Book;
 import business.ControllerInterface;
+import business.LibraryMember;
 import business.SystemController;
 import business.exceptions.BookCopyException;
 import librarysystem.Config;
 import librarysystem.Messages;
+import librarysystem.Util;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
-public class BookGui {
+public class BookGui extends JPanel{
 
     private String[] bookAttributes = {"Title", "ISBN", "Max days" , "Authors" };
     private JTextField[] bookFields = new JTextField[bookAttributes.length];
     private JPanel addBookPanel;
-
     public static final BookGui INSTANCE = new BookGui();
-
 
     BookGui() {  addBookForm();}
 
     private ControllerInterface ci = new SystemController();
 
+    public JTextField[] getBookFields() {
+        return bookFields;
+    }
+
     private void addBookForm() {
 
         addBookPanel = new JPanel(new BorderLayout());
-        JLabel panelTitle = new JLabel(" Add New Book Book");
-
-        JPanel panelTitlePanel = new JPanel(new BorderLayout());
-        panelTitlePanel.add(panelTitle);
+        JLabel panelTitle = new JLabel(" Add New Book");
         panelTitle.setFont(Config.DEFUALT_FONT);
-        addBookPanel.add(panelTitle, BorderLayout.NORTH);
+        panelTitle.setForeground(Util.DARK_BLUE);
+        addBookPanel.add(panelTitle , BorderLayout.NORTH);
 
-        JPanel bookFormPanel = createAddBookForm();
-
-        addBookPanel.add(bookFormPanel, BorderLayout.SOUTH);
+        JPanel addFormPanel = createAddBookForm();
+        addBookPanel.add(addFormPanel , BorderLayout.CENTER);
 
         // add add button
-        JButton addBookBtn = new JButton("Add Book");
-        addBookBtn.addActionListener(new addBookListiner());
+        JButton addBBookBtn = new JButton("Add Member");
+        addBBookBtn.addActionListener(new addBookListiner());
+        JPanel addBookBtnPanel = new JPanel(new BorderLayout());
+        addBookBtnPanel.add(addBBookBtn, BorderLayout.CENTER);
 
-        addBookPanel.add(addBookBtn, BorderLayout.SOUTH);
+        // add to book Panel at the bottom
+        addBookPanel.add(addBookBtnPanel, BorderLayout.SOUTH);
 
     }
 
@@ -66,20 +72,32 @@ public class BookGui {
 
         return nameForm;
     }
-    public  JScrollPane createBookListPanel() {
-        String data[][]={ {"100","Amit","670000", "1212"},
-                {"102","Jai","780000", "1212312"},
-                {"101","Sachin","700000", "2345314"}};
-        String column[]={"Member ID","First Name","Last Name", "Phone Number"};
-        JTable jt=new JTable(data,column);
-        JScrollPane sp=new JScrollPane(jt);
 
+    public  JScrollPane getBookList() {
+        String column[]={"ISBN","TITLE","AUTHORS", "MAX BORROW DAYS", "NUMBER OF COPIES"};
+        HashMap<String , Book> bookHashMap = ci.getBooks();
+        String bookData [][] = new String[bookHashMap.size()][column.length];
+        List<String> bookID = ci.allBookIds();
+
+        for(int i = 0 ; i < bookID.size(); i++){
+
+            Book book = bookHashMap.get(bookID.get(i));
+            bookData[i][0] = book.getIsbn();
+            bookData[i][1] = book.getTitle();
+            bookData[i][2] = book.getAuthors().toString();
+            bookData[i][3] = ""+book.getMaxCheckoutLength();
+            bookData[i][4] = ""+book.getNumCopies();
+        }
+
+        JTable jt=new JTable(bookData,column);
+        JScrollPane sp=new JScrollPane(jt);
         return sp;
+
     }
 
     private JPanel createAddBookForm() {
 
-        JPanel bookFormPanel = new JPanel(new FlowLayout());
+        JPanel bookFormPanel = new JPanel(new GridLayout(bookAttributes.length, 0));
         for (int i = 0; i < bookFields.length; i++) {
             bookFormPanel.add(getElementWithLabelBook(bookAttributes[i], i));
         }
@@ -112,6 +130,5 @@ public class BookGui {
 
         }
     }
-
 
 }

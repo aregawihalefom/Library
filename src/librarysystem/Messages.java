@@ -12,7 +12,7 @@ public class Messages {
             int err = 1;
             if(messageType.equals("Error")){
                  err = JOptionPane.ERROR_MESSAGE;
-            }else if(messageType.equals("Success")){
+            }else if(messageType.equals("Info")){
                 err = JOptionPane.INFORMATION_MESSAGE;
             } else {
                 err = JOptionPane.WARNING_MESSAGE;

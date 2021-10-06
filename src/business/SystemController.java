@@ -12,10 +12,10 @@ import dataaccess.Auth;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessFacade;
 import dataaccess.User;
-import librarysystem.AddMemberScreen;
+import librarysystem.AdministratorsDashboard;
+import librarysystem.LibrarianDashboard;
 import librarysystem.LibrarySystem;
-
-import javax.xml.crypto.Data;
+import librarysystem.guiElements.UtilGui;
 
 public class SystemController implements ControllerInterface {
 
@@ -26,32 +26,35 @@ public class SystemController implements ControllerInterface {
 		DataAccess da = new DataAccessFacade();
 		HashMap<String, User> map = da.readUserMap();
 
-		System.out.println(map.toString());
-
 		if(!map.containsKey(id)) {
 			throw new LoginException("ID " + id + " not found");
 		}
-		String passwordFound = map.get(id).getPassword();
 
+		String passwordFound = map.get(id).getPassword();
 		if(!passwordFound.equals(password)) {
-			throw new LoginException("Password incorrect");
+			throw new LoginException("Username/Password combination is incorrect");
 		}
 		currentAuth = map.get(id).getAuthorization();
+		System.out.println(currentAuth.name());
 
-		//
 		if(currentAuth.name().equals("LIBRARIAN")){
 			LibrarySystem.hideAllWindows();
-			AddMemberScreen.INSTANCE.init();
-			AddMemberScreen.INSTANCE.setVisible(true);
+			LibrarianDashboard.INSTANCE.init();
+			LibrarianDashboard.INSTANCE.setVisible(true);
 		}
-		else if(currentAuth.equals("ADMIN")){
+		else if(currentAuth.name().equals("ADMIN")){
+			UtilGui.hideAllWindows();
+			AdministratorsDashboard.INSTANCE.init();
+			AdministratorsDashboard.INSTANCE.setVisible(true);
+		}
+		else if(currentAuth.name().equals("BOTH")){
 
-		}
-		else if(currentAuth.equals("BOTH")){
+//			UtilGui.hideAllWindows();
+//			AdministratorsDashboard.INSTANCE.init();
+//			AdministratorsDashboard.INSTANCE.setVisible(true);
 
 		}else{
 			throw new LoginException("Cannot Authorize");
-
 		}
 
 	}
@@ -119,5 +122,25 @@ public class SystemController implements ControllerInterface {
 	public HashMap<String, LibraryMember> getMembers() {
 		DataAccess da = new DataAccessFacade();
 		return da.readMemberMap();
+	}
+
+	public LibraryMember checkMemberId(String member_id){
+		if(!allMemberIds().contains(member_id.trim()))
+			return null;
+		return getMembers().get(member_id);
+	}
+
+	@Override
+	public Book checkBookISBN(String isbn) {
+
+		if(!allBookIds().contains(isbn))
+			return null;
+		return getBooks().get(isbn);
+	}
+
+	@Override
+	public HashMap<String, Book> getBooks() {
+		 DataAccess da = new DataAccessFacade();
+		 return da.readBooksMap();
 	}
 }

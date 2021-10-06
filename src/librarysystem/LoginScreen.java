@@ -2,6 +2,9 @@ package librarysystem;
 
 import business.LoginException;
 import business.SystemController;
+import librarysystem.ruleSet.RuleException;
+import librarysystem.ruleSet.RuleSet;
+import librarysystem.ruleSet.RuleSetFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,15 +21,10 @@ public class LoginScreen extends JFrame implements LibWindow {
     @Override
     public void init() {
 
-        this.setVisible(true);
-        this.setLayout(null);
-        this.setSize(600, 500);
-
-        this.setResizable(false); // cannot be minimized
-        this.setLocationRelativeTo(null);//sets the frame in the middle
-
-        getContentPane().setLayout(null);
-        createMyGUI();
+        //this.setVisible(true);
+        this.setSize(500, 500);
+         createMyGUI();
+         add(mainPanel);
     }
     public boolean isInitialized() {
         return isInitialized;
@@ -40,6 +38,8 @@ public class LoginScreen extends JFrame implements LibWindow {
     JPanel mainPanel;
     JPanel jPButtonPanel;
 
+
+
     private JLabel jLTitle;
     JLabel jLUserName;
     JTextField jTFUserName;
@@ -48,8 +48,14 @@ public class LoginScreen extends JFrame implements LibWindow {
 
     JButton jBLogin;
 
-    private LoginScreen() {
+    private LoginScreen() {}
 
+    public JTextField getjTFUserName() {
+        return jTFUserName;
+    }
+
+    public JPasswordField getjTFPassword() {
+        return jTFPassword;
     }
 
     private void createMyGUI() {
@@ -114,8 +120,7 @@ public class LoginScreen extends JFrame implements LibWindow {
         jPBody2.setBounds(170, 70, 230, 270);
 
         getContentPane().add(mainPanel);
-        mainPanel.setBounds(0, 0, 600, 500);
-
+        mainPanel.setBounds(0, 0, Config.APP_WIDTH, Config.APP_HEIGHT);
 
     }
 
@@ -125,15 +130,19 @@ public class LoginScreen extends JFrame implements LibWindow {
         button.addActionListener(evt -> {
             SystemController sys = new SystemController();
             try{
+
+                RuleSet loginRules = RuleSetFactory.getRuleSet(LoginScreen.this);
+                loginRules.applyRules(LoginScreen.this);
+
                 String username = jTFUserName.getText();
                 char[] pass = jTFPassword.getPassword();
                 String password = new String(pass);
+
+                // Call controller
                 sys.login(username,password);
-                System.out.println(sys.allBookIds().toString());
-            }catch(LoginException ex){
 
-                JOptionPane.showMessageDialog(this,ex.getMessage());
-
+            }catch(LoginException | RuleException ex){
+               new Messages.InnerFrame().showMessage(ex.getMessage(), "Error");
             }
         });
     }

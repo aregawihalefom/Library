@@ -21,7 +21,7 @@ public class DataAccessFacade implements DataAccess {
 		BOOKS, MEMBERS, USERS;
 	}
 	
-	public static final String OUTPUT_DIR = System.getProperty("user.dir") 
+	public static final String OUTPUT_DIR = System.getProperty("user.dir")
 			+ "/src/dataaccess/storage";
 	public static final String DATE_PATTERN = "MM/dd/yyyy";
 	
@@ -31,7 +31,6 @@ public class DataAccessFacade implements DataAccess {
 		String memberId = member.getMemberId();
 		mems.put(memberId, member);
 		saveToStorage(StorageType.MEMBERS, mems);
-		System.out.println("Member saved");
 	}
 
 	//Books
@@ -79,8 +78,7 @@ public class DataAccessFacade implements DataAccess {
 	
 	
 	/////load methods - these place test data into the storage area
-	///// - used just once at startup  
-	
+	///// - used just once at startup
 		
 	static void loadBookMap(List<Book> bookList) {
 		HashMap<String, Book> books = new HashMap<String, Book>();

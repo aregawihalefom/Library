@@ -1,14 +1,17 @@
 package librarysystem;
 
 import business.*;
-import business.exceptions.BookCopyException;
 import business.exceptions.LibraryMemberException;
+import librarysystem.guiElements.BookGui;
+import librarysystem.guiElements.CheckOutGui;
+import librarysystem.guiElements.MemberGui;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 public class LibrarianDashboard extends JFrame implements LibWindow {
@@ -21,34 +24,32 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
     private JPanel addBookPanel;
     private JPanel addMemberPanel;
     private JPanel addCopyPanel;
+    private JPanel librarianDashobardPanel;
     private JPanel mainPanel;
-
+    private JPanel checkOutPanel;
 
     JList<ListItem> linkList;
     JPanel cards;
 
-    private String[] bookAttributes = {"Title", "ISBN", "Max days" , "Authors" };
-    private String[] memeberAttributes = {"Member Number", "First Name", "Last Name", "Phone Number"};
     private String[] copyAttributes = {"Copy Number", "Book ISBN"};
-
-    private JTextField[] bookFields = new JTextField[bookAttributes.length];
-    private JTextField[] memberFields = new JTextField[memeberAttributes.length];
     private JTextField[] copyFields = new JTextField[copyAttributes.length];
+
 
     public static  String[] sideBarItems;
 
     // list items which will be added to the ListModel for linkList
-    ListItem item1, item2 , item3;
+    ListItem item1, item2 , item3, item4;
 
     //Singleton class
     private LibrarianDashboard() {
 
         setSize(Config.APP_WIDTH, Config.APP_WIDTH);
-        sideBarItems = new String[]{"Check Out", "Print CheckOut"};
+        sideBarItems = new String[]{"Dashboard", "Checkout", "Logout"};
 
         // list items which will be added to the ListModel for linkList
         item1 = new ListItem(sideBarItems[0], true);
         item2 = new ListItem(sideBarItems[1], true);
+
 
     }
 
@@ -79,7 +80,7 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
 
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, linkList, cards);
-        splitPane.setDividerLocation(200);
+        splitPane.setDividerLocation(Config.DIVIDER);
 
         mainPanel = new JPanel(new FlowLayout());
         mainPanel.add(splitPane);
@@ -87,143 +88,36 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
         add(splitPane);
         isInitialized = true;
 
-
     }
 
     public void createMainPanels() {
 
-        // Add member panel
-        addMemberForm();
+        // create admin panel
+        addLibrarianDashBoardPanel();
 
-        // Add panel
-        addBookForm();
-
-        // Add copy panel
-        addBookCopyForm();
+        // add checkout panel
+        checkOutPanel = CheckOutGui.INSTANCE.getCheckOutPanel();
 
         cards = new JPanel(new CardLayout());
-        cards.add(addMemberPanel, item1.getItemName());
-        cards.add(addBookPanel, item2.getItemName());
-        cards.add(addCopyPanel, item3.getItemName());
+        cards.add(librarianDashobardPanel, item1.getItemName());
+        cards.add(checkOutPanel, item2.getItemName());
 
     }
 
-    private void addBookForm() {
+    private void addLibrarianDashBoardPanel() {
 
-        addBookPanel = new JPanel(new BorderLayout());
-        JLabel panelTitle = new JLabel(" Add Book");
+        librarianDashobardPanel = new JPanel(new BorderLayout());
+        librarianDashobardPanel.add(new JLabel("Librarian Dashboard"), BorderLayout.NORTH);
 
-        panelTitle.setFont(Config.DEFUALT_FONT);
+        JScrollPane memberListPanel = CheckOutGui.INSTANCE.getCheckOutList();
+        JPanel checkoutTalbe = new JPanel(new BorderLayout());
+        checkoutTalbe.setPreferredSize(new Dimension(Config.APP_WIDTH - Config.DIVIDER, Config.APP_HEIGHT));
+        checkoutTalbe.add(memberListPanel, BorderLayout.CENTER);
 
-        addBookPanel.add(panelTitle, BorderLayout.NORTH);
-
-        JPanel bookFormPanel = createAddBookForm();
-
-        addBookPanel.add(bookFormPanel, BorderLayout.SOUTH);
-
-        // add add button
-        JButton addBookBtn = new JButton("Add Book");
-        addBookBtn.addActionListener(new addBookListiner());
-
-//        JPanel addBookBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-//        addBookBtnPanel.add(addBookBtn);
-
-        // add to book Panel at the bottom
-        addBookPanel.add(addBookBtn, BorderLayout.SOUTH);
-
+        checkoutTalbe.setFont(Config.DEFUALT_FONT);
+        checkoutTalbe.setForeground(Util.LINK_AVAILABLE);
+        librarianDashobardPanel.add(checkoutTalbe , BorderLayout.SOUTH);
     }
-
-    private void addMemberForm() {
-
-        addMemberPanel = new JPanel(new BorderLayout());
-        JLabel panelTitle = new JLabel(" Add Book");
-        panelTitle.setFont(Config.DEFUALT_FONT);
-        panelTitle.setForeground(Util.LINK_AVAILABLE);
-
-        addMemberPanel.add(panelTitle , BorderLayout.NORTH);
-
-        JPanel memberFormPanel = createAddBookForm();
-
-        addMemberPanel.add(memberFormPanel , BorderLayout.CENTER);
-
-        // add add button
-        JButton addBookBtn = new JButton("Add Book");
-        addBookBtn.addActionListener(new addBookListiner());
-        JPanel addBookBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        addBookBtnPanel.add(addBookBtn);
-
-        // add to book Panel at the bottom
-        memberFormPanel.add(addBookBtnPanel, BorderLayout.SOUTH);
-    }
-
-    private void addBookCopyForm() {
-
-        addCopyPanel = new JPanel(new BorderLayout());
-        JLabel panelTitle = new JLabel(" Add Book");
-        panelTitle.setFont(Config.DEFUALT_FONT);
-        panelTitle.setForeground(Util.LINK_AVAILABLE);
-
-        addCopyPanel.add(panelTitle , BorderLayout.NORTH);
-
-        JPanel memberFormPanel = createAddBookForm();
-
-        addCopyPanel.add(memberFormPanel , BorderLayout.CENTER);
-
-        // add add button
-        JButton addBookBtn = new JButton("Add Book");
-        addBookBtn.addActionListener(new addBookListiner());
-        JPanel addBookBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        addBookBtnPanel.add(addBookBtn);
-
-        // add to book Panel at the bottom
-        addCopyPanel.add(addBookBtnPanel, BorderLayout.SOUTH);
-    }
-
-    public void addBookPanel(){
-
-        addBookPanel = new JPanel(new BorderLayout());
-        JLabel panelTitle = new JLabel(" Add Book");
-        panelTitle.setFont(Config.DEFUALT_FONT);
-        panelTitle.setForeground(Util.LINK_AVAILABLE);
-
-        addBookPanel.add(panelTitle , BorderLayout.NORTH);
-
-        JPanel bookFormPanel = createAddBookForm();
-
-        addBookPanel.add(bookFormPanel , BorderLayout.CENTER);
-
-        // add add button
-        JButton addBookBtn = new JButton("Add Book");
-        addBookBtn.addActionListener(new addBookListiner());
-        JPanel addBookBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        addBookBtnPanel.add(addBookBtn);
-
-        // add to book Panel at the bottom
-        addBookPanel.add(addBookBtnPanel, BorderLayout.SOUTH);
-    }
-
-    private JPanel getElementWithLabel(String labelName, JTextField[] fields, int jtextFieldIndex) {
-
-        JLabel label = new JLabel(" " + labelName);
-        fields[jtextFieldIndex] = new JTextField(20);
-        JPanel nameForm = new JPanel(new BorderLayout());
-        nameForm.add(label, BorderLayout.NORTH);
-        nameForm.add(fields[jtextFieldIndex], BorderLayout.CENTER);
-
-        return nameForm;
-    }
-
-    private JPanel createAddBookForm() {
-
-        JPanel bookFormPanel = new JPanel(new GridLayout(bookAttributes.length, 0));
-
-        for (int i = 0; i < bookFields.length; i++) {
-            bookFormPanel.add(getElementWithLabel(bookAttributes[i], bookFields, i));
-        }
-
-        return bookFormPanel;
-    }
-
 
     @Override
     public boolean isInitialized() {
@@ -243,7 +137,7 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
         model.addElement(item1);
         model.addElement(item2);
 
-        linkList = new JList<>(model);
+        linkList = new JList<ListItem>(model);
         linkList.setCellRenderer(new DefaultListCellRenderer() {
 
             @SuppressWarnings("rawtypes")
@@ -279,11 +173,11 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
     public static void main(String[] args) {
         EventQueue.invokeLater(() ->
         {
-            AdministratorsDashboard.INSTANCE.setTitle(Config.APP_NAME);
-            AdministratorsDashboard.INSTANCE.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            AdministratorsDashboard.INSTANCE.init();
-            centerFrameOnDesktop(AdministratorsDashboard.INSTANCE);
-            AdministratorsDashboard.INSTANCE.setVisible(true);
+            LibrarianDashboard.INSTANCE.setTitle(Config.APP_NAME);
+            LibrarianDashboard.INSTANCE.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            LibrarianDashboard.INSTANCE.init();
+            centerFrameOnDesktop(LibrarianDashboard.INSTANCE);
+            LibrarianDashboard.INSTANCE.setVisible(true);
         });
     }
 
@@ -294,71 +188,6 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
         int frameHeight = f.getSize().height;
         int frameWidth = f.getSize().width;
         f.setLocation(((width - frameWidth) / 2), (height - frameHeight) / 3);
-    }
-
-    private class addBookListiner implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-
-            String title = bookFields[0].getText().trim();
-            String isbn = bookFields[1].getText().trim();
-            int maxBorrowDays = Integer.parseInt(bookFields[2].getText());
-
-            Author author = null;
-
-            for(JTextField input : bookFields){
-                if(isEmptyString(input.getText())){
-                    new Messages.InnerFrame().showMessage("All fields should be nonempty", "Error");
-                    break;
-                }else{
-
-                    try {
-
-                        Book book = new Book(isbn, title, maxBorrowDays, new ArrayList<>());
-                        boolean status = ci.addBook(book);
-                        if(status) throw new LibraryMemberException("Member Id is already taken");
-
-                    } catch (LibraryMemberException | BookCopyException ex) {
-                        new Messages.InnerFrame().showMessage(ex.getMessage(), "Error");
-                    }
-                }
-            }
-
-
-
-
-
-        }
-    }
-
-    private class addMemberListiner implements  ActionListener{
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-
-            for(JTextField input : memberFields){
-                if(isEmptyString(input.getText())){
-                    new Messages.InnerFrame().showMessage("All fields should be nonempty", "Error");
-                    break;
-                }else{
-
-                    try {
-                        LibraryMember member = new LibraryMember(memberFields[0].getText(), memberFields[1].getText(),
-                                memberFields[2].getText(), memberFields[3].getText(), null);
-                        boolean status = ci.addMember(member);
-                        if(status) throw new LibraryMemberException("Member Id is already taken");
-
-                    } catch (LibraryMemberException ex) {
-                        new Messages.InnerFrame().showMessage(ex.getMessage(), "Error");
-                    }
-                }
-            }
-        }
-    }
-
-    public boolean isEmptyString(String str){
-
-        return str.equals("");
     }
 
 }

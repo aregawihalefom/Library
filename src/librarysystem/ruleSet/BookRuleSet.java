@@ -1,7 +1,6 @@
 package librarysystem.ruleSet;
 
 import librarysystem.guiElements.BookGui;
-import librarysystem.guiElements.MemberGui;
 
 import javax.swing.*;
 import java.awt.*;

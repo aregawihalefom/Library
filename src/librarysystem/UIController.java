@@ -1,10 +1,10 @@
 package librarysystem;
 import librarysystem.guiElements.BookGui;
-import librarysystem.guiElements.MemberGui;
+import librarysystem.guiElements.MemberUI;
 
 public enum UIController {
     INSTANCE;
-    MemberGui memberGui;
+    MemberUI memberGui;
     LoginScreen loginScreen;
     BookGui bookGui;
     AdministratorsDashboard admin;

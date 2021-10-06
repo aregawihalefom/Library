@@ -3,7 +3,7 @@ package librarysystem.ruleSet;
 import librarysystem.LoginScreen;
 import librarysystem.guiElements.BookGui;
 import librarysystem.guiElements.CheckOutGui;
-import librarysystem.guiElements.MemberGui;
+import librarysystem.guiElements.MemberUI;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -14,7 +14,7 @@ final public class RuleSetFactory {
 	static HashMap<Class<? extends Component>, RuleSet> map = new HashMap<>();
 	static {
 		map.put(BookGui.class, new BookRuleSet());
-		map.put(MemberGui.class, new MemberRuleSet());
+		map.put(MemberUI.class, new MemberRuleSet());
 		map.put(LoginScreen.class, new LoginRuleSet());
 		map.put(CheckOutGui.class, new CheckOutRuleSet());
 	}

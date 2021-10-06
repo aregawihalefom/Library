@@ -1,18 +1,18 @@
 package librarysystem.ruleSet;
 
 import librarysystem.Util;
-import librarysystem.guiElements.MemberGui;
+import librarysystem.guiElements.MemberUI;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class MemberRuleSet implements RuleSet {
 
-    private MemberGui memberGui;
+    private MemberUI memberGui;
 
     @Override
     public void applyRules(Component ob) throws RuleException {
-         memberGui = (MemberGui) ob;
+         memberGui = (MemberUI) ob;
          nonemptyRule();
          idNumericRule();
          zipNumericRule();

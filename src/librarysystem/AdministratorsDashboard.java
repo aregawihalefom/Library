@@ -2,7 +2,7 @@ package librarysystem;
 
 import business.*;
 import librarysystem.guiElements.BookGui;
-import librarysystem.guiElements.MemberGui;
+import librarysystem.guiElements.MemberUI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,7 +22,7 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
     private  JPanel adminDashobardPanel;
     private  JPanel mainPanel;
 
-    private static MemberGui memberGui;
+    private static MemberUI memberGui;
     private static BookGui bookGui;
 
     private String[] copyAttributes = {"Copy Number", "Book ISBN"};
@@ -86,7 +86,7 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
     public void createMainPanels() {
 
         // Add member panel
-        UIController.INSTANCE.memberGui = new MemberGui();
+        UIController.INSTANCE.memberGui = new MemberUI();
         memberGui = UIController.INSTANCE.memberGui;
         UIController.INSTANCE.admin = this;
 

@@ -137,9 +137,8 @@ public class MemberUI extends JPanel{
                 ci.saveLibraryMember(member);
                 new Messages.InnerFrame().showMessage("Member added successfully", "Info");
                 clearFormFields();
-
-                //UIController.INSTANCE
-
+                myTable = loadDataToTable();
+                UIController.INSTANCE.admin.setTabPanel();
 
             } catch (LibraryMemberException | RuleException ex) {
                 new Messages.InnerFrame().showMessage(ex.getMessage(), "Error");

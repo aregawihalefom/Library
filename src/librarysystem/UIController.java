@@ -4,9 +4,9 @@ import librarysystem.guiElements.MemberUI;
 
 public enum UIController {
     INSTANCE;
-    MemberUI memberGui;
-    LoginScreen loginScreen;
-    BookGui bookGui;
-    AdministratorsDashboard admin;
+    public MemberUI memberGui;
+    public LoginScreen loginScreen;
+    public BookGui bookGui;
+    public AdministratorsDashboard admin;
 
 }

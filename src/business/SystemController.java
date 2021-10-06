@@ -6,7 +6,6 @@ import java.util.List;
 
 import business.Controllers.BookController;
 import business.Controllers.BookCopyController;
-import business.Controllers.MemberController;
 import business.exceptions.BookCopyException;
 import dataaccess.Auth;
 import dataaccess.DataAccess;
@@ -79,19 +78,10 @@ public class SystemController implements ControllerInterface {
 	/**
 	 *  Add New book
 	 * @param member
-	 * @return
 	 */
-	public boolean addMember(LibraryMember member){
-
-		MemberController mc = new MemberController();
-//		boolean success =  mc.memberIdTakenCheck(member.getMemberId(), allMemberIds());
-//		if(!success) {
-//			return success;
-//		}
-		// New member and add this
-		mc.addNewMember(member, new DataAccessFacade());;
-
-		return true;
+	public void saveLibraryMember(LibraryMember member){
+		DataAccess da = new DataAccessFacade();
+		da.saveNewMember(member);
 	}
 
 	@Override
@@ -124,10 +114,11 @@ public class SystemController implements ControllerInterface {
 		return da.readMemberMap();
 	}
 
-	public LibraryMember checkMemberId(String member_id){
+	public boolean checkMemberId(String member_id){
+		System.out.println(allMemberIds());
 		if(!allMemberIds().contains(member_id.trim()))
-			return null;
-		return getMembers().get(member_id);
+			return false;
+		return true;
 	}
 
 	@Override
@@ -142,5 +133,14 @@ public class SystemController implements ControllerInterface {
 	public HashMap<String, Book> getBooks() {
 		 DataAccess da = new DataAccessFacade();
 		 return da.readBooksMap();
+	}
+
+	public Address addAddress(String street, String city , String state , String zip){
+		return new Address(street, city, state, zip);
+	}
+
+	@Override
+	public LibraryMember addLibraryMember(String memberNumber, String firstName, String lastName, String phoneNumber, Address address) {
+		return new LibraryMember(memberNumber, firstName, lastName, phoneNumber, address);
 	}
 }

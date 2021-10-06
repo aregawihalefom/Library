@@ -19,25 +19,20 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
     private  JPanel addMemberPanel;
     private  JPanel addCopyPanel;
 
-    private static JScrollPane memberListPanel;
-    private static JScrollPane bookListPanel;
-
-
     private  JPanel adminDashobardPanel;
     private  JPanel mainPanel;
-    private static MemberGui memberGui = MemberGui.INSTANCE;
 
-    JList<ListItem> linkList;
-    JPanel cards;
+    private static MemberGui memberGui;
+    private static BookGui bookGui;
 
     private String[] copyAttributes = {"Copy Number", "Book ISBN"};
     private JTextField[] copyFields = new JTextField[copyAttributes.length];
     public static  String[] sideBarItems;
 
     private JTable jTable;
-
-    // list items which will be added to the ListModel for linkList
     ListItem item1, item2 , item3, item4;
+    JList<ListItem> linkList;
+    JPanel cards;
 
     //Singleton class
     private AdministratorsDashboard() {
@@ -84,23 +79,25 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
 
         mainPanel = new JPanel(new FlowLayout());
         mainPanel.add(splitPane);
-
         add(splitPane);
         isInitialized = true;
-
-
     }
 
     public void createMainPanels() {
 
-        // create addmin panel
-        addAdmindDashBoardPanel();
-
         // Add member panel
+        UIController.INSTANCE.memberGui = new MemberGui();
+        memberGui = UIController.INSTANCE.memberGui;
+        UIController.INSTANCE.admin = this;
+
         addMemberPanel = memberGui.getAddMemberPanel();
 
         // Add paaddBookForm()
+        bookGui = BookGui.INSTANCE;
         addBookPanel = BookGui.INSTANCE.getAddBookPanel();
+
+        // Set tabPanel
+        setTabPanel();
 
         // Add copy panel
         addBookCopyForm();
@@ -113,13 +110,14 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
 
     }
 
-    public void addAdmindDashBoardPanel() {
+    public void setTabPanel() {
 
+        // create addmin panel
         adminDashobardPanel = new JPanel(new BorderLayout());
         adminDashobardPanel.add(new JLabel("Admin dashboard"), BorderLayout.NORTH);
 
-        memberListPanel = MemberGui.INSTANCE.getMemberList();
-        bookListPanel = BookGui.INSTANCE.getBookList();;
+        JScrollPane memberListPanel = memberGui.getMemberList();
+        JScrollPane bookListPanel = bookGui.getBookList();;
 
         JPanel p3=new JPanel();
         JLabel bookList =new JLabel("Book  copy List");
@@ -149,17 +147,6 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
 
         // add to book Panel at the bottom
         addCopyPanel.add(addBookBtnPanel, BorderLayout.SOUTH);
-    }
-
-    @Override
-    public boolean isInitialized() {
-        return isInitialized;
-    }
-
-    @Override
-    public void isInitialized(boolean val) {
-        isInitialized = val;
-
     }
 
     @SuppressWarnings("serial")
@@ -224,8 +211,15 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
         f.setLocation(((width - frameWidth) / 2), (height - frameHeight) / 3);
     }
 
-    public static  void updateMemberList(){
-        memberListPanel = MemberGui.INSTANCE.getMemberList();
+    @Override
+    public boolean isInitialized() {
+        return isInitialized;
+    }
+
+    @Override
+    public void isInitialized(boolean val) {
+        isInitialized = val;
 
     }
+
 }

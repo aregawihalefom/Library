@@ -1,8 +1,9 @@
 package business;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class CheckOutEntry {
+public class CheckOutEntry  {
 
     private CheckOutRecord record;
     private LocalDate checkOutDate;

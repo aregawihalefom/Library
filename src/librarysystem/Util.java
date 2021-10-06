@@ -73,4 +73,11 @@ public class Util {
 		int frameWidth = f.getSize().width;
 		f.setLocation(((width - frameWidth) / 2), (height - frameHeight) / 3);
 	}
+
+	public static boolean isInRangeAtoZ(char c) {
+		return (int)'A' <= (int)c && (int)c <= (int)'Z';
+	}
+	public static boolean isInRangeatoz(char c) {
+		return (int)'a' <= (int)c && (int)c <= (int)'z';
+	}
 }

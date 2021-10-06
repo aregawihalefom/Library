@@ -1,22 +1,18 @@
 package librarysystem.guiElements;
 
 import business.*;
-import business.exceptions.BookCopyException;
-import business.exceptions.CheckOutException;
-import business.exceptions.LibraryMemberException;
+import business.exceptions.*;
+
 import librarysystem.Config;
 import librarysystem.Messages;
 import librarysystem.Util;
-import librarysystem.ruleSet.RuleException;
-import librarysystem.ruleSet.RuleSet;
-import librarysystem.ruleSet.RuleSetFactory;
+import librarysystem.ruleSet.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.time.LocalDate;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -84,7 +80,6 @@ public class CheckOutGui extends JPanel{
     public  JScrollPane getCheckOutList() {
 
         System.out.println(ci.getBooks());
-
         String column[]={"ISBN","TITLE","AUTHORS", "MAX BORROW DAYS", "NUMBER OF COPIES"};
         HashMap<String , Book> bookHashMap = ci.getBooks();
 
@@ -96,6 +91,7 @@ public class CheckOutGui extends JPanel{
             Book book = bookHashMap.get(bookID.get(i));
             bookData[i][0] = book.getIsbn();
             bookData[i][1] = book.getTitle();
+
             bookData[i][2] = book.getAuthors().toString();
             bookData[i][3] = ""+book.getMaxCheckoutLength();
             bookData[i][4] = ""+book.getNumCopies();
@@ -131,10 +127,10 @@ public class CheckOutGui extends JPanel{
                 String memeberId = checkOutFields[0].getText().trim();
                 String isbn = checkOutFields[1].getText().trim();
 
-                // Check if member is available
-                LibraryMember member = ci.checkMemberId(memeberId);
+                System.out.println(memeberId);
 
-                if( member == null)
+                // Check if member is available
+                if( !ci.checkMemberId(memeberId))
                     throw new RuleException("No member found with Member ID = "+ memeberId);
 
                 //System.out.println(member);
@@ -158,10 +154,11 @@ public class CheckOutGui extends JPanel{
 
                // Create record -> checkout date , due date and max_days
                //  Are Incorporated already
+                LibraryMember member = ci.getMembers().get(memeberId);
                 member.addCheckoutRecord(copy);
 
                 // Save member
-                ci.addMember(member);
+                ci.saveLibraryMember(member);
 
                 // Save the user
                 ci.addBook(book);

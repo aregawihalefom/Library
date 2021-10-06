@@ -19,7 +19,7 @@ import java.util.List;
 
 public class BookGui extends JPanel{
 
-    private String[] bookAttributes = {"Title", "ISBN", "Max days" , "Authors" };
+    private String[] bookAttributes = {"Title", "ISBN", "Max days" , "Authors"};
     private JTextField[] bookFields = new JTextField[bookAttributes.length];
     private JPanel addBookPanel;
     public static final BookGui INSTANCE = new BookGui();

@@ -12,7 +12,6 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
 
     private static final long serialVersionUID = 1L;
     public static  AdministratorsDashboard INSTANCE = new AdministratorsDashboard();
-    ControllerInterface ci = new SystemController();
     private boolean isInitialized = false;
 
     private  JPanel addBookPanel;
@@ -29,7 +28,7 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
     private JTextField[] copyFields = new JTextField[copyAttributes.length];
     public static  String[] sideBarItems;
 
-    private JTable jTable;
+    public JTable memberListJTable, bookListJTable;
     ListItem item1, item2 , item3, item4;
     JList<ListItem> linkList;
     JPanel cards;
@@ -37,7 +36,8 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
     //Singleton class
     private AdministratorsDashboard() {
 
-        setSize(Config.APP_WIDTH, Config.APP_WIDTH);
+        UIController.INSTANCE.admin  = this;
+        setSize(Config.APP_WIDTH, Config.APP_HEIGHT);
         sideBarItems = new String[]{"Admin Dashboard", "Add New Member", "Add New Book", "Add Copy"};
 
         // list items which will be added to the ListModel for linkList
@@ -45,7 +45,6 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
         item2 = new ListItem(sideBarItems[1], true);
         item3 = new ListItem(sideBarItems[2], true);
         item4 = new ListItem(sideBarItems[3], true);
-
     }
 
     public void init() {
@@ -86,15 +85,12 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
     public void createMainPanels() {
 
         // Add member panel
-        UIController.INSTANCE.memberGui = new MemberUI();
-        memberGui = UIController.INSTANCE.memberGui;
-        UIController.INSTANCE.admin = this;
-
+        memberGui = MemberUI.INSTANCE;
         addMemberPanel = memberGui.getAddMemberPanel();
 
-        // Add paaddBookForm()
+        // Add ddBookForm()
         bookGui = BookGui.INSTANCE;
-        addBookPanel = BookGui.INSTANCE.getAddBookPanel();
+        addBookPanel = bookGui.getAddBookPanel();
 
         // Set tabPanel
         setTabPanel();
@@ -107,7 +103,6 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
         cards.add(addMemberPanel, item2.getItemName());
         cards.add(addBookPanel, item3.getItemName());
         cards.add(addCopyPanel, item4.getItemName());
-
     }
 
     public void setTabPanel() {
@@ -116,17 +111,18 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
         adminDashobardPanel = new JPanel(new BorderLayout());
         adminDashobardPanel.add(new JLabel("Admin dashboard"), BorderLayout.NORTH);
 
-        JScrollPane memberListPanel = memberGui.getMemberList();
-        JScrollPane bookListPanel = bookGui.getBookList();;
+        // Two tables
+        memberListJTable = memberGui.getMemberList();
+        bookListJTable = bookGui.getBookList();;
 
-        JPanel p3=new JPanel();
+        JPanel p3 = new JPanel();
         JLabel bookList =new JLabel("Book  copy List");
         p3.add(bookList);
 
         JTabbedPane tp=new JTabbedPane();
         tp.setPreferredSize(new Dimension(Config.APP_WIDTH - Config.DIVIDER, Config.APP_HEIGHT));
-        tp.add("Members",memberListPanel);
-        tp.add("Books",bookListPanel);
+        tp.add("Members",memberListJTable);
+        tp.add("Books",bookListJTable);
         tp.add("Book Copies",p3);
         tp.setFont(Config.DEFUALT_FONT);
         tp.setForeground(Util.LINK_AVAILABLE);

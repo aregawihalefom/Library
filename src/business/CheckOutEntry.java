@@ -1,9 +1,13 @@
 package business;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-public class CheckOutEntry  {
+final public class CheckOutEntry implements  Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -9020142387772885123L;
 
     private CheckOutRecord record;
     private LocalDate checkOutDate;
@@ -14,7 +18,7 @@ public class CheckOutEntry  {
     CheckOutEntry(CheckOutRecord record, BookCopy copy) {
         this.record = record;
         this.checkOutDate = LocalDate.now();
-        this.dueDate = checkOutDate.plusDays(copy.getBook().getMaxCheckoutLength());
+        this.dueDate = this.checkOutDate.plusDays(copy.getBook().getMaxCheckoutLength());
         this.copy = copy;
     }
 

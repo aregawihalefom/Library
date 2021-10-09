@@ -1,4 +1,4 @@
-package librarysystem.guiElements;
+package librarysystem.guiElements.checkOut;
 
 import business.*;
 import business.exceptions.*;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class CheckOutGui extends JPanel{
+public class CheckOutBookPanel extends JPanel{
 
     private final String[] checkOutAttributes = {"Member ID", "ISBN"};
 
@@ -27,9 +27,9 @@ public class CheckOutGui extends JPanel{
     private final JTextField[] checkOutFields = new JTextField[checkOutAttributes.length];
     private JPanel addCheckoutForm;
 
-    public static final CheckOutGui INSTANCE = new CheckOutGui();
+    public static final CheckOutBookPanel INSTANCE = new CheckOutBookPanel();
 
-    CheckOutGui() {  addCheckoutForm();}
+    CheckOutBookPanel() {  addCheckoutForm();}
 
     private ControllerInterface ci = new SystemController();
 
@@ -120,8 +120,8 @@ public class CheckOutGui extends JPanel{
             try {
 
                 // First check standard rules
-                RuleSet checkoutRules = RuleSetFactory.getRuleSet(CheckOutGui.this);
-                checkoutRules.applyRules(CheckOutGui.this);
+                RuleSet checkoutRules = RuleSetFactory.getRuleSet(CheckOutBookPanel.this);
+                checkoutRules.applyRules(CheckOutBookPanel.this);
 
                 // Get the values
                 String memeberId = checkOutFields[0].getText().trim();
@@ -138,30 +138,30 @@ public class CheckOutGui extends JPanel{
                     throw new RuleException("No book with ISBN = "+ isbn + " found");
 
                 // Check if book is available
-               if(!book.isAvailable())
-                   throw new CheckOutException("The book with ISBN  = "+ isbn +" is not currently available");
+                if(!book.isAvailable())
+                    throw new CheckOutException("The book with ISBN  = "+ isbn +" is not currently available");
 
-               // Now available copy
+                // Now available copy
                 BookCopy copy = book.getNextAvailableCopy();
 
-               if(copy == null)
-                   throw new CheckOutException("No copies of this book available currently");
+                if(copy == null)
+                    throw new CheckOutException("No copies of this book available currently");
 
-               // change status of the book
-               copy.changeAvailability();
+                // change status of the book
+                copy.changeAvailability();
 
-               // Create record -> checkout date , due date and max_days
-               //  Are Incorporated already
+                // Create record -> checkout date , due date and max_days
+                //  Are Incorporated already
                 LibraryMember member = ci.getMembers().get(memeberId);
 
                 // Record check out for a given
                 member.addCheckoutRecord(copy);
 
                 // Save checkout
-               // ci.saveCheckout(member.getMemberId(), member.getRecord());
+                // ci.saveCheckout(member.getMemberId(), member.getRecord());
 
                 // Save member
-               ci.saveLibraryMember(member);
+                ci.saveLibraryMember(member);
 
 
                 // Save the book
@@ -174,7 +174,7 @@ public class CheckOutGui extends JPanel{
                 new Messages.InnerFrame().showMessage("Input for Max days should be a number", "Error");
             } catch (RuleException | CheckOutException | LibraryMemberException | BookCopyException ex) {
                 new Messages.InnerFrame().showMessage(ex.getMessage(), "Error");
-           }
+            }
 
         }
     }

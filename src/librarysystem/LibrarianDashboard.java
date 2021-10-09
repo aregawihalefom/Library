@@ -2,24 +2,51 @@ package librarysystem;
 
 import business.*;
 import librarysystem.guiElements.CheckOutGui;
+import librarysystem.guiElements.checkOut.CheckOutBookPanel;
+import librarysystem.guiElements.checkOut.ChekOutStatusPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class LibrarianDashboard extends JFrame implements LibWindow {
 
     private static final long serialVersionUID = 1L;
+
     public static final LibrarianDashboard INSTANCE = new LibrarianDashboard();
     ControllerInterface ci = new SystemController();
+
     private boolean isInitialized = false;
 
-    private JPanel addBookPanel;
-    private JPanel addMemberPanel;
-    private JPanel addCopyPanel;
     private JPanel librarianDashobardPanel;
     private JPanel mainPanel;
-    private JPanel checkOutPanel;
+
+    // member related panels
+    private JPanel searchMemberPanel, allMemberIdsPanel;
+
+    // book related panels
+    private JPanel searBookPanel , allBookIdsPanel;
+
+    // checkoutRelated Panels
+    private JPanel checkOutBookPanel , searchMemberCheckOutPanel, checkOutStatusPanel;
+
+    // logout panel
+    private JPanel logoutPanel;
+
+
+    public static final String[] LIBRARIAN_MENU = {
+            "Search member",
+            "Search book",
+            "Checkout book",
+            "Checkout status",
+            "Search member checkouts",
+            "All member ids",
+            "All book ids",
+            "Logout",
+    };
+
 
     JList<ListItem> linkList;
     JPanel cards;
@@ -27,26 +54,25 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
     private String[] copyAttributes = {"Copy Number", "Book ISBN"};
     private JTextField[] copyFields = new JTextField[copyAttributes.length];
 
-
-    public static  String[] sideBarItems;
-
-    // list items which will be added to the ListModel for linkList
-    ListItem item1, item2 , item3, item4;
+    List<ListItem> itemList = new ArrayList<>();
 
     //Singleton class
     private LibrarianDashboard() {
-
-        setSize(Config.APP_WIDTH, Config.APP_WIDTH);
-        sideBarItems = new String[]{"Dashboard", "Checkout", "Logout"};
-
-        // list items which will be added to the ListModel for linkList
-        item1 = new ListItem(sideBarItems[0], true);
-        item2 = new ListItem(sideBarItems[1], true);
-
-
+        setSize(Config.APP_WIDTH, Config.APP_HEIGHT);
     }
 
+    public void constructSideBarMenu()
+    {
+        for(String item : Config.LIBRARIAN_MENU){
+            itemList.add(new ListItem(item, true));
+        }
+
+    }
     public void init() {
+
+
+        // Construct sideBarMenu ListItems
+        constructSideBarMenu();
 
         // Create sidebar
         createLinkLabels();
@@ -61,7 +87,7 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
             CardLayout cl = (CardLayout) (cards.getLayout());
 
             if (!allowed) {
-                value = item1.getItemName();
+                value = itemList.get(0).getItemName();
                 linkList.setSelectedIndex(0);
             }
             cl.show(cards, value);
@@ -80,6 +106,7 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
 
         add(splitPane);
         isInitialized = true;
+        this.setResizable(false);
 
     }
 
@@ -88,12 +115,19 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
         // create admin panel
         addLibrarianDashBoardPanel();
 
+        // Assign crossponding panels to crsossponding Cards
+        setCards();
+
+    }
+
+    public void setCards(){
+
         // add checkout panel
-        checkOutPanel = CheckOutGui.INSTANCE.getCheckOutPanel();
+        checkOutBookPanel = CheckOutBookPanel.INSTANCE.getCheckOutPanel();
 
         cards = new JPanel(new CardLayout());
-        cards.add(librarianDashobardPanel, item1.getItemName());
-        cards.add(checkOutPanel, item2.getItemName());
+        cards.add(librarianDashobardPanel, itemList.get(0).getItemName());
+        cards.add(checkOutBookPanel, itemList.get(0).getItemName());
 
     }
 
@@ -101,15 +135,8 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
 
         librarianDashobardPanel = new JPanel(new BorderLayout());
         librarianDashobardPanel.add(new JLabel("Librarian Dashboard"), BorderLayout.NORTH);
-
         JScrollPane memberListPanel = CheckOutGui.INSTANCE.getCheckOutList();
-        JPanel checkoutTalbe = new JPanel(new BorderLayout());
-        checkoutTalbe.setPreferredSize(new Dimension(Config.APP_WIDTH - Config.DIVIDER, Config.APP_HEIGHT));
-        checkoutTalbe.add(memberListPanel, BorderLayout.CENTER);
-
-        checkoutTalbe.setFont(Config.DEFUALT_FONT);
-        checkoutTalbe.setForeground(Util.LINK_AVAILABLE);
-        librarianDashobardPanel.add(checkoutTalbe , BorderLayout.SOUTH);
+        librarianDashobardPanel.add(memberListPanel ,BorderLayout.CENTER);
     }
 
     @Override
@@ -127,8 +154,10 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
     public void createLinkLabels() {
 
         DefaultListModel<ListItem> model = new DefaultListModel<>();
-        model.addElement(item1);
-        model.addElement(item2);
+
+        for(ListItem item : itemList){
+            model.addElement(item);
+        }
 
         linkList = new JList<ListItem>(model);
         linkList.setCellRenderer(new DefaultListCellRenderer() {
@@ -163,24 +192,5 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
         });
     }
 
-    public static void main(String[] args) {
-        EventQueue.invokeLater(() ->
-        {
-            LibrarianDashboard.INSTANCE.setTitle(Config.APP_NAME);
-            LibrarianDashboard.INSTANCE.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            LibrarianDashboard.INSTANCE.init();
-            centerFrameOnDesktop(LibrarianDashboard.INSTANCE);
-            LibrarianDashboard.INSTANCE.setVisible(true);
-        });
-    }
-
-    public static void centerFrameOnDesktop(Component f) {
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        int height = toolkit.getScreenSize().height;
-        int width = toolkit.getScreenSize().width;
-        int frameHeight = f.getSize().height;
-        int frameWidth = f.getSize().width;
-        f.setLocation(((width - frameWidth) / 2), (height - frameHeight) / 3);
-    }
 
 }

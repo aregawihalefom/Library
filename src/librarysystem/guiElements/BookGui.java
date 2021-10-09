@@ -1,19 +1,19 @@
 package librarysystem.guiElements;
 
-import business.Book;
-import business.ControllerInterface;
-import business.LibraryMember;
-import business.SystemController;
+import business.*;
 import business.exceptions.BookCopyException;
 import librarysystem.Config;
 import librarysystem.Messages;
+import librarysystem.UIController;
 import librarysystem.Util;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,13 +21,39 @@ public class BookGui extends JPanel{
 
     private String[] bookAttributes = {"Title", "ISBN", "Max days" , "Authors"};
     private JTextField[] bookFields = new JTextField[bookAttributes.length];
-    private JPanel addBookPanel;
-    public static final BookGui INSTANCE = new BookGui();
 
-    BookGui() {  addBookForm();}
+    private JPanel addBookPanel;
+    public static  BookGui INSTANCE = new BookGui();
+    private JTable myTable;
 
     private ControllerInterface ci = new SystemController();
 
+    private BookGui() {
+        UIController.INSTANCE.bookGui = this;
+        addBookForm();
+        myTable = loadTableData();
+    }
+
+    private JTable loadTableData() {
+
+        String column[]={"ISBN","TITLE","AUTHORS", "MAX BORROW DAYS", "NUMBER OF COPIES"};
+        HashMap<String , Book> bookHashMap = ci.getBooks();
+        String bookData [][] = new String[bookHashMap.size()][column.length];
+        List<String> bookID = ci.allBookIds();
+
+        for(int i = 0 ; i < bookID.size(); i++){
+
+            Book book = bookHashMap.get(bookID.get(i));
+            bookData[i][0] = book.getIsbn();
+            bookData[i][1] = book.getTitle();
+            bookData[i][2] = book.getAuthors().toString();
+            bookData[i][3] = ""+book.getMaxCheckoutLength();
+            bookData[i][4] = ""+book.getNumCopies();
+        }
+
+        DefaultTableModel model = new DefaultTableModel(bookData, column);
+        return new JTable(model);
+    }
     public JTextField[] getBookFields() {
         return bookFields;
     }
@@ -44,7 +70,7 @@ public class BookGui extends JPanel{
         addBookPanel.add(addFormPanel , BorderLayout.CENTER);
 
         // add add button
-        JButton addBBookBtn = new JButton("Add Member");
+        JButton addBBookBtn = new JButton("Add Book");
         addBBookBtn.addActionListener(new addBookListiner());
         JPanel addBookBtnPanel = new JPanel(new BorderLayout());
         addBookBtnPanel.add(addBBookBtn, BorderLayout.CENTER);
@@ -73,26 +99,8 @@ public class BookGui extends JPanel{
         return nameForm;
     }
 
-    public  JScrollPane getBookList() {
-        String column[]={"ISBN","TITLE","AUTHORS", "MAX BORROW DAYS", "NUMBER OF COPIES"};
-        HashMap<String , Book> bookHashMap = ci.getBooks();
-        String bookData [][] = new String[bookHashMap.size()][column.length];
-        List<String> bookID = ci.allBookIds();
-
-        for(int i = 0 ; i < bookID.size(); i++){
-
-            Book book = bookHashMap.get(bookID.get(i));
-            bookData[i][0] = book.getIsbn();
-            bookData[i][1] = book.getTitle();
-            bookData[i][2] = book.getAuthors().toString();
-            bookData[i][3] = ""+book.getMaxCheckoutLength();
-            bookData[i][4] = ""+book.getNumCopies();
-        }
-
-        JTable jt=new JTable(bookData,column);
-        JScrollPane sp=new JScrollPane(jt);
-        return sp;
-
+    public  JTable getBookList() {
+        return this.myTable;
     }
 
     private JPanel createAddBookForm() {
@@ -116,11 +124,16 @@ public class BookGui extends JPanel{
                 String isbn = bookFields[1].getText().trim();
 
                 int maxBorrowDays = Integer.parseInt(bookFields[2].getText());
+                Author aregawi = new Author("Aregawi", "Halefom", "12212" , new Address("1000 N. 4th st.", "Fairfield", "IA", "52557"), "Student");
 
-                Book book = new Book(isbn, title, maxBorrowDays, new ArrayList<>());
-                boolean status = ci.addBook(book);
+                List<Author> authors = new ArrayList<Author>();
+                authors.add(aregawi);
+                ci.addBook(isbn, title, maxBorrowDays, (ArrayList<Author>) authors);
+
+                // Now display success message
                 new Messages.InnerFrame().showMessage("New book added successfully","Info");
-                System.out.println(ci.allBookIds().toString());
+                DefaultTableModel model = (DefaultTableModel) UIController.INSTANCE.admin.bookListJTable.getModel();
+                model.addRow(new  Object[]{ isbn, title, authors.toString(), maxBorrowDays, 1});
 
             } catch (BookCopyException ex) {
                 new Messages.InnerFrame().showMessage(ex.getMessage(), "Error");

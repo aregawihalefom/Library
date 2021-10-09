@@ -11,6 +11,7 @@ import java.util.List;
 
 import business.Book;
 import business.BookCopy;
+import business.CheckOutRecord;
 import business.LibraryMember;
 import dataaccess.DataAccessFacade.StorageType;
 
@@ -18,7 +19,7 @@ import dataaccess.DataAccessFacade.StorageType;
 public class DataAccessFacade implements DataAccess {
 	
 	enum StorageType {
-		BOOKS, MEMBERS, USERS;
+		BOOKS, MEMBERS, USERS, CHECKOUT;
 	}
 	
 	public static final String OUTPUT_DIR = System.getProperty("user.dir")
@@ -27,6 +28,7 @@ public class DataAccessFacade implements DataAccess {
 	
 	//implement: other save operations
 	public void saveNewMember(LibraryMember member) {
+
 		HashMap<String, LibraryMember> mems = readMemberMap();
 		String memberId = member.getMemberId();
 		mems.put(memberId, member);
@@ -39,10 +41,10 @@ public class DataAccessFacade implements DataAccess {
 		HashMap<String, Book> bookHashMap = readBooksMap();
 		String book_isbn = book.getIsbn();
 		bookHashMap.put(book_isbn, book);
-		saveToStorage(StorageType.BOOKS, book);
+		saveToStorage(StorageType.BOOKS, bookHashMap);
 	}
 
-	//Books
+	//User
 	public void saveNewUser(User  user) {
 
 		// first read the file
@@ -52,6 +54,21 @@ public class DataAccessFacade implements DataAccess {
 		saveToStorage(StorageType.USERS, user);
 	}
 
+	// Checkout
+	public void saveCheckout(String memberId , CheckOutRecord record){
+		// first read the file
+		HashMap<String, CheckOutRecord> chekOutRecordHashMap = readCheckOutRecord();
+		chekOutRecordHashMap.put(memberId, record);
+		saveToStorage(StorageType.CHECKOUT, chekOutRecordHashMap);
+	}
+
+	@SuppressWarnings("unchecked")
+	private HashMap<String, CheckOutRecord> readCheckOutRecord() {
+		//Returns a Map with name/value pairs being
+		//   memberID -> CheckOutRecord
+
+		return (HashMap<String,CheckOutRecord>) readFromStorage(StorageType.CHECKOUT);
+	}
 
 	@SuppressWarnings("unchecked")
 	public  HashMap<String,Book> readBooksMap() {
@@ -67,8 +84,7 @@ public class DataAccessFacade implements DataAccess {
 		return (HashMap<String, LibraryMember>) readFromStorage(
 				StorageType.MEMBERS);
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	public HashMap<String, User> readUserMap() {
 		//Returns a Map with name/value pairs being
@@ -90,7 +106,7 @@ public class DataAccessFacade implements DataAccess {
 		userList.forEach(user -> users.put(user.getId(), user));
 		saveToStorage(StorageType.USERS, users);
 	}
- 
+
 	static void loadMemberMap(List<LibraryMember> memberList) {
 		HashMap<String, LibraryMember> members = new HashMap<String, LibraryMember>();
 		memberList.forEach(member -> members.put(member.getMemberId(), member));
@@ -133,8 +149,6 @@ public class DataAccessFacade implements DataAccess {
 		}
 		return retVal;
 	}
-	
-	
 	
 	final static class Pair<S,T> implements Serializable{
 		

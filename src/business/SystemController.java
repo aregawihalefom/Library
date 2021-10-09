@@ -14,12 +14,15 @@ import dataaccess.User;
 import librarysystem.AdministratorsDashboard;
 import librarysystem.LibrarianDashboard;
 import librarysystem.LibrarySystem;
+import librarysystem.UIController;
 import librarysystem.guiElements.UtilGui;
+
+import javax.swing.table.DefaultTableModel;
 
 public class SystemController implements ControllerInterface {
 
 	public static Auth currentAuth = null;
-	
+
 	public void login(String id, String password) throws LoginException {
 
 		DataAccess da = new DataAccessFacade();
@@ -34,7 +37,6 @@ public class SystemController implements ControllerInterface {
 			throw new LoginException("Username/Password combination is incorrect");
 		}
 		currentAuth = map.get(id).getAuthorization();
-		System.out.println(currentAuth.name());
 
 		if(currentAuth.name().equals("LIBRARIAN")){
 			LibrarySystem.hideAllWindows();
@@ -85,11 +87,16 @@ public class SystemController implements ControllerInterface {
 	}
 
 	@Override
-	public boolean addBook(Book book) throws BookCopyException {
+	public boolean addBook(String isbn , String title , int maxBorrowDays, ArrayList<Author> authors) throws BookCopyException {
+
+		Book book = new Book(isbn, title, maxBorrowDays, authors);
+		book.addCopy();
+
 		BookController bookController = new BookController();
 		if(bookController.bookAlreadyAdded(book.getIsbn(), allBookIds()))
 			throw  new BookCopyException("Book with ISBN = " + book.getIsbn() + " already exists.");
 		bookController.addNewBook(book);
+
 		return true;
 	}
 
@@ -115,7 +122,6 @@ public class SystemController implements ControllerInterface {
 	}
 
 	public boolean checkMemberId(String member_id){
-		System.out.println(allMemberIds());
 		if(!allMemberIds().contains(member_id.trim()))
 			return false;
 		return true;
@@ -142,5 +148,13 @@ public class SystemController implements ControllerInterface {
 	@Override
 	public LibraryMember addLibraryMember(String memberNumber, String firstName, String lastName, String phoneNumber, Address address) {
 		return new LibraryMember(memberNumber, firstName, lastName, phoneNumber, address);
+	}
+
+	@Override
+	public void saveCheckout(String memberId, CheckOutRecord record) {
+
+		DataAccess da = new DataAccessFacade();
+		da.saveCheckout(memberId, record);
+
 	}
 }

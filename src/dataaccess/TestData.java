@@ -47,7 +47,6 @@ public class TestData {
 	public void libraryMemberData() {
 
 
-		CheckOutRecord record = new CheckOutRecord();
 		LibraryMember libraryMember = new LibraryMember("1001", "Andy", "Rogers", "641-223-2211", addresses.get(4));
 		members.add(libraryMember);
 		libraryMember = new LibraryMember("1002", "Drew", "Stevens", "702-998-2414", addresses.get(5));
@@ -61,6 +60,8 @@ public class TestData {
 		
 		DataAccessFacade.loadMemberMap(members);	
 	}
+
+
 	
 	///////////// DATA //////////////
 	List<LibraryMember> members = new ArrayList<LibraryMember>();
@@ -98,7 +99,8 @@ public class TestData {
 			add(new Book("48-56882", "Jimmy's First Day of School", 7, Arrays.asList(allAuthors.get(4))));		
 		}
 	};
-	
+
+
 	@SuppressWarnings("serial")
 	List<User> allUsers = new ArrayList<User>() {
 		{
@@ -107,4 +109,13 @@ public class TestData {
 			add(new User("103", "111", Auth.BOTH));
 		}
 	};
+
+
+	List<CheckOutEntry> checkOutEntries = new ArrayList<CheckOutEntry>(){
+
+
+
+	};
+
+
 }

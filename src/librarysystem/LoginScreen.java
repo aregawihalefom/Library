@@ -48,7 +48,7 @@ public class LoginScreen extends JFrame implements LibWindow {
 
     JButton jBLogin;
 
-    private LoginScreen() {}
+    private LoginScreen() {UIController.INSTANCE.loginScreen = INSTANCE;}
 
     public JTextField getjTFUserName() {
         return jTFUserName;
@@ -121,10 +121,11 @@ public class LoginScreen extends JFrame implements LibWindow {
 
         getContentPane().add(mainPanel);
         mainPanel.setBounds(0, 0, Config.APP_WIDTH, Config.APP_HEIGHT);
+        this.setResizable(false);
 
     }
 
-    //actionlistener for the buttons of this view. action to these buttons
+    //actionlinks for the buttons of this view. action to these buttons
     //are given in the controller of this view
     private void addLoginButtonListener(JButton button) {
         button.addActionListener(evt -> {
@@ -137,6 +138,7 @@ public class LoginScreen extends JFrame implements LibWindow {
                 String username = jTFUserName.getText();
                 char[] pass = jTFPassword.getPassword();
                 String password = new String(pass);
+
 
                 // Call controller
                 sys.login(username,password);

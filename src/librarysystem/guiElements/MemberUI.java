@@ -11,6 +11,7 @@ import librarysystem.ruleSet.RuleSet;
 import librarysystem.ruleSet.RuleSetFactory;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,19 +23,17 @@ public class MemberUI extends JPanel{
     private final String[] memeberAttributes ;
     private final JTextField[] memberFields ;
     private final ControllerInterface ci = new SystemController();
+    public static MemberUI INSTANCE = new MemberUI();
 
     private JTable myTable;
     private JPanel addMemberPanel;
 
-    public MemberUI() {
+    private MemberUI() {
         memeberAttributes = new String[] {"Member Number", "First Name", "Last Name", "Phone Number", "Street", "City", "State", "Zip"};
         memberFields = new JTextField[memeberAttributes.length];
         addMemberForm();
         myTable = loadDataToTable();
-    }
-
-    public JTable getMyTable() {
-        return myTable;
+        UIController.INSTANCE.memberGui = this;
     }
 
     public JTextField[] getMemberFields() {
@@ -66,8 +65,8 @@ public class MemberUI extends JPanel{
         memberFormPanel.add(addBMemberBtnPanel, BorderLayout.SOUTH);
     }
 
-    public JScrollPane getMemberList(){
-        return new JScrollPane(myTable);
+    public JTable getMemberList(){
+        return myTable;
     }
 
     private JTable loadDataToTable(){
@@ -86,7 +85,10 @@ public class MemberUI extends JPanel{
             memberData[i][3] = member.getAddress() != null ? member.getAddress().toString() : "";
         }
 
-        return new JTable(memberData, column);
+        DefaultTableModel model = new DefaultTableModel(memberData, column);
+
+        return new JTable(model);
+
     }
     private JPanel createMemberForm() {
 
@@ -114,7 +116,6 @@ public class MemberUI extends JPanel{
 
         return nameForm;
     }
-
     private class addMemberListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -145,6 +146,7 @@ public class MemberUI extends JPanel{
             }
         }
     }
+
     public void clearFormFields(){
         for(JTextField field : memberFields){
             field.setText("");

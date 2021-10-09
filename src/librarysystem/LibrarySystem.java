@@ -34,7 +34,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
     private static LibWindow[] allWindows = { 
     	LibrarySystem.INSTANCE,
 		LoginScreen.INSTANCE,
-		AllMemberIdsWindow.INSTANCE,	
+		AllMemberIdsWindow.INSTANCE,
 		AllBookIdsWindow.INSTANCE
 	};
     	

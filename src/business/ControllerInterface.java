@@ -1,5 +1,6 @@
 package business;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public interface ControllerInterface {
 	List<String> allBookIds();
 
 	void saveLibraryMember(LibraryMember member) throws LibraryMemberException;
-	boolean addBook(Book book) throws BookCopyException;
+	boolean addBook(String isbn, String  title, int maxBorrowDays, ArrayList<Author> authors) throws BookCopyException;
 	boolean addBookCopy(String ISBN, int copyNumber) throws BookCopyException;
 
 	HashMap<String, LibraryMember> getMembers();
@@ -23,4 +24,6 @@ public interface ControllerInterface {
 	Book checkBookISBN(String isbn);
 	Address addAddress(String street , String city , String state , String zip);
 	LibraryMember addLibraryMember(String memberNumber , String firstName , String lastName , String phoneNumber , Address address);
+
+	void saveCheckout(String memberId, CheckOutRecord record);
 }

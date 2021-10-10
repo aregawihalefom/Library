@@ -14,7 +14,6 @@ import dataaccess.User;
 import librarysystem.AdministratorsDashboard;
 import librarysystem.BothDashboard;
 import librarysystem.LibrarianDashboard;
-import librarysystem.LibrarySystem;
 import librarysystem.guiElements.UtilGui;
 
 public class SystemController implements ControllerInterface {
@@ -37,7 +36,7 @@ public class SystemController implements ControllerInterface {
 		}
 		currentAuth = map.get(id).getAuthorization();
 
-		LibrarySystem.hideAllWindows();
+		UtilGui.hideAllWindows();
 
 		if(currentAuth.name().equals("LIBRARIAN")){
 
@@ -47,15 +46,12 @@ public class SystemController implements ControllerInterface {
 			LibrarianDashboard.INSTANCE.setVisible(true);
 		}
 		else if(currentAuth.name().equals("ADMIN")){
-			UtilGui.hideAllWindows();
-
 			if(!AdministratorsDashboard.INSTANCE.isInitialized())
 			  AdministratorsDashboard.INSTANCE.init();
 			AdministratorsDashboard.INSTANCE.setVisible(true);
 		}
 		else if(currentAuth.name().equals("BOTH")){
 
-			UtilGui.hideAllWindows();
 			if(!AdministratorsDashboard.INSTANCE.isInitialized())
 			   BothDashboard.INSTANCE.init();
 			BothDashboard.INSTANCE.setVisible(true);

@@ -75,7 +75,7 @@ public class SearchBookPanel extends JPanel{
 
     }
 
-    public  JPanel getSearchBookPanel(){ return searchBookPanel; }
+    public  JPanel getSearchBookPanel(){ return this; }
 
     private JPanel getElementWithLabelBook(String labelName, int jtextFieldIndex) {
 

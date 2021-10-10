@@ -3,6 +3,7 @@ package librarysystem.guiElements.member;
 import business.*;
 import business.exceptions.LibraryMemberException;
 import librarysystem.*;
+import librarysystem.guiElements.UtilGui;
 import librarysystem.ruleSet.RuleException;
 import librarysystem.ruleSet.RuleSet;
 import librarysystem.ruleSet.RuleSetFactory;
@@ -37,29 +38,41 @@ public class MemberUI extends JPanel{
         return memberFields;
     }
     public JPanel getAddMemberPanel() {
-        return addMemberPanel;
+        return this;
     }
 
     private void addMemberForm() {
 
-        addMemberPanel = new JPanel(new BorderLayout());
         JLabel panelTitle = new JLabel(" Add Member");
         panelTitle.setFont(Config.DEFUALT_FONT);
         panelTitle.setForeground(Util.DARK_BLUE);
-        addMemberPanel.add(panelTitle , BorderLayout.NORTH);
+
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        titlePanel.add(new JSeparator(JSeparator.HORIZONTAL), BorderLayout.NORTH);
+        titlePanel.add(panelTitle, BorderLayout.CENTER);
+        titlePanel.add(new JSeparator(JSeparator.HORIZONTAL), BorderLayout.SOUTH);
 
         JPanel memberFormPanel = createMemberForm();
-        addMemberPanel.add(memberFormPanel , BorderLayout.CENTER);
 
         // add add button
         JButton addBMemberBtn = new JButton("Add Member");
+
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        addBMemberBtn.setPreferredSize(UtilGui.BTN_DIMENSION);
         addBMemberBtn.addActionListener(new addMemberListener());
-        JPanel addBMemberBtnPanel = new JPanel(new BorderLayout());
-        addBMemberBtnPanel.add(addBMemberBtn, BorderLayout.CENTER);
+        btnPanel.add(addBMemberBtn);
+
+        JPanel container = new JPanel(new BorderLayout());
+        container.setPreferredSize(UtilGui.PANEL_DIMENSION);
+
+        // combine
+        container.add(titlePanel, BorderLayout.NORTH);
+        container.add(new JScrollPane());
+        container.add(memberFormPanel, BorderLayout.CENTER);
+        container.add(btnPanel, BorderLayout.SOUTH);
 
 
-        // add to book Panel at the bottom
-        memberFormPanel.add(addBMemberBtnPanel, BorderLayout.SOUTH);
+        this.add(container);
     }
 
     public JTable getMemberList(){
@@ -100,16 +113,16 @@ public class MemberUI extends JPanel{
 
         JLabel label = new JLabel(" " + labelName);
         JPanel labelPanel = new JPanel(new BorderLayout());
-        labelPanel.add(label, BorderLayout.NORTH);
+        labelPanel.add(label, BorderLayout.CENTER);
 
         memberFields[jtextFieldIndex] = new JTextField(20);
         JPanel formPanel = new JPanel(new BorderLayout());
-        formPanel.add(memberFields[jtextFieldIndex], BorderLayout.NORTH);
+        formPanel.add(memberFields[jtextFieldIndex], BorderLayout.CENTER);
 
 
         JPanel nameForm = new JPanel(new BorderLayout());
-        nameForm.add(labelPanel, BorderLayout.NORTH);
-        nameForm.add(formPanel, BorderLayout.CENTER);
+        nameForm.add(labelPanel, BorderLayout.WEST);
+        nameForm.add(formPanel, BorderLayout.EAST);
 
         return nameForm;
     }

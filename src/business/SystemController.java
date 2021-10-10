@@ -25,40 +25,8 @@ public class SystemController implements ControllerInterface {
 
 		
 		HashMap<String, User> map = da.readUserMap();
+        validateLogin(map , id , password);
 
-		if(!map.containsKey(id)) {
-			throw new LoginException("ID " + id + " not found");
-		}
-
-		String passwordFound = map.get(id).getPassword();
-		if(!passwordFound.equals(password)) {
-			throw new LoginException("Username/Password combination is incorrect");
-		}
-		currentAuth = map.get(id).getAuthorization();
-		UtilGui.hideAllWindows();
-
-
-		if(currentAuth.name().equals("LIBRARIAN")){
-			if(!LibrarianDashboard.INSTANCE.isInitialized()){
-				LibrarianDashboard.INSTANCE.init();
-			}
-
-			LibrarianDashboard.INSTANCE.setVisible(true);
-		}
-		else if(currentAuth.name().equals("ADMIN")){
-			if(!AdministratorsDashboard.INSTANCE.isInitialized())
-			  AdministratorsDashboard.INSTANCE.init();
-			AdministratorsDashboard.INSTANCE.setVisible(true);
-		}
-		else if(currentAuth.name().equals("BOTH")){
-
-			if(!AdministratorsDashboard.INSTANCE.isInitialized())
-			   BothDashboard.INSTANCE.init();
-			BothDashboard.INSTANCE.setVisible(true);
-
-		}else{
-			throw new LoginException("Cannot Authorize");
-		}
 	}
 	@Override
 	public List<String> allMemberIds() {
@@ -155,4 +123,45 @@ public class SystemController implements ControllerInterface {
 	public void deleteMember(LibraryMember memberId) {
 		da.deleteMember(memberId);
 	}
+
+
+	private void validateLogin(HashMap<String, User> map, String id, String password) throws LoginException {
+
+		if(!map.containsKey(id)) {
+			throw new LoginException("ID " + id + " not found");
+		}
+
+		String passwordFound = map.get(id).getPassword();
+		if(!passwordFound.equals(password)) {
+			throw new LoginException("Username/Password combination is incorrect");
+		}
+		currentAuth = map.get(id).getAuthorization();
+		UtilGui.hideAllWindows();
+
+
+		if(currentAuth.name().equals("LIBRARIAN")){
+			if(!LibrarianDashboard.INSTANCE.isInitialized()){
+				LibrarianDashboard.INSTANCE.init();
+			}
+
+			LibrarianDashboard.INSTANCE.setVisible(true);
+		}
+		else if(currentAuth.name().equals("ADMIN")){
+			if(!AdministratorsDashboard.INSTANCE.isInitialized())
+				AdministratorsDashboard.INSTANCE.init();
+			AdministratorsDashboard.INSTANCE.setVisible(true);
+		}
+		else if(currentAuth.name().equals("BOTH")){
+
+			if(!AdministratorsDashboard.INSTANCE.isInitialized())
+				BothDashboard.INSTANCE.init();
+			BothDashboard.INSTANCE.setVisible(true);
+
+		}else{
+			throw new LoginException("Cannot Authorize");
+		}
+
+	}
+
+
 }

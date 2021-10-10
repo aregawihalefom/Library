@@ -1,9 +1,6 @@
-package librarysystem.guiElements;
+package librarysystem.guiElements.member;
 
-import business.Address;
-import business.ControllerInterface;
-import business.LibraryMember;
-import business.SystemController;
+import business.*;
 import business.exceptions.LibraryMemberException;
 import librarysystem.*;
 import librarysystem.ruleSet.RuleException;
@@ -33,7 +30,6 @@ public class MemberUI extends JPanel{
         memberFields = new JTextField[memeberAttributes.length];
         addMemberForm();
         myTable = loadDataToTable();
-        UIController.INSTANCE.memberGui = this;
     }
 
     public JTextField[] getMemberFields() {
@@ -137,14 +133,20 @@ public class MemberUI extends JPanel{
                 // Add New instance
                 ci.saveLibraryMember(member);
                 new Messages.InnerFrame().showMessage("Member added successfully", "Info");
+                addRowToJTable(member);
                 clearFormFields();
-                myTable = loadDataToTable();
-                UIController.INSTANCE.admin.setTabPanel();
 
             } catch (LibraryMemberException | RuleException ex) {
                 new Messages.InnerFrame().showMessage(ex.getMessage(), "Error");
             }
         }
+    }
+
+    private void addRowToJTable(LibraryMember member){
+
+        DefaultTableModel model = (DefaultTableModel) myTable.getModel();
+        model.insertRow(0, new  Object[]{member.getMemberId() , member.getFirstName() +" " +member.getLastName(),
+                member.getTelephone(), member.getAddress().toString()});
     }
 
     public void clearFormFields(){

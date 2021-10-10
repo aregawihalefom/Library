@@ -1,7 +1,7 @@
 package librarysystem.ruleSet;
 
 import librarysystem.Util;
-import librarysystem.guiElements.MemberUI;
+import librarysystem.guiElements.member.MemberUI;
 
 import javax.swing.*;
 import java.awt.*;

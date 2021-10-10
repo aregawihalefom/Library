@@ -17,19 +17,18 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class BookGui extends JPanel{
+public class EditOrDeleteMember extends JPanel{
 
     private String[] bookAttributes = {"Title", "ISBN", "Max days" , "Authors"};
     private JTextField[] bookFields = new JTextField[bookAttributes.length];
 
-    private JPanel addBookPanel;
-    public static  BookGui INSTANCE = new BookGui();
+    private JPanel editOrDeleteMemberPanel;
+    public static  EditOrDeleteMember INSTANCE = new EditOrDeleteMember();
     private JTable myTable;
 
     private ControllerInterface ci = new SystemController();
 
-    private BookGui() {
-        UIController.INSTANCE.bookGui = this;
+    private EditOrDeleteMember() {
         addBookForm();
         myTable = loadTableData();
     }
@@ -60,14 +59,14 @@ public class BookGui extends JPanel{
 
     private void addBookForm() {
 
-        addBookPanel = new JPanel(new BorderLayout());
+        editOrDeleteMemberPanel = new JPanel(new BorderLayout());
         JLabel panelTitle = new JLabel(" Add New Book");
         panelTitle.setFont(Config.DEFUALT_FONT);
         panelTitle.setForeground(Util.DARK_BLUE);
-        addBookPanel.add(panelTitle , BorderLayout.NORTH);
+        editOrDeleteMemberPanel.add(panelTitle , BorderLayout.NORTH);
 
         JPanel addFormPanel = createAddBookForm();
-        addBookPanel.add(addFormPanel , BorderLayout.CENTER);
+        editOrDeleteMemberPanel.add(addFormPanel , BorderLayout.CENTER);
 
         // add add button
         JButton addBBookBtn = new JButton("Add Book");
@@ -76,11 +75,11 @@ public class BookGui extends JPanel{
         addBookBtnPanel.add(addBBookBtn, BorderLayout.CENTER);
 
         // add to book Panel at the bottom
-        addBookPanel.add(addBookBtnPanel, BorderLayout.SOUTH);
+        editOrDeleteMemberPanel.add(addBookBtnPanel, BorderLayout.SOUTH);
 
     }
 
-    public  JPanel getAddBookPanel(){ return addBookPanel; }
+    public  JPanel getEditOrDeletePanel(){ return editOrDeleteMemberPanel; }
 
     private JPanel getElementWithLabelBook(String labelName, int jtextFieldIndex) {
 

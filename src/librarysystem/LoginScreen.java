@@ -38,8 +38,6 @@ public class LoginScreen extends JFrame implements LibWindow {
     JPanel mainPanel;
     JPanel jPButtonPanel;
 
-
-
     private JLabel jLTitle;
     JLabel jLUserName;
     JTextField jTFUserName;
@@ -48,7 +46,7 @@ public class LoginScreen extends JFrame implements LibWindow {
 
     JButton jBLogin;
 
-    private LoginScreen() {UIController.INSTANCE.loginScreen = INSTANCE;}
+    private LoginScreen() {UIController.INSTANCE.loginScreen = this;}
 
     public JTextField getjTFUserName() {
         return jTFUserName;
@@ -125,8 +123,6 @@ public class LoginScreen extends JFrame implements LibWindow {
 
     }
 
-    //actionlinks for the buttons of this view. action to these buttons
-    //are given in the controller of this view
     private void addLoginButtonListener(JButton button) {
         button.addActionListener(evt -> {
             SystemController sys = new SystemController();
@@ -148,6 +144,5 @@ public class LoginScreen extends JFrame implements LibWindow {
             }
         });
     }
-
 
 }

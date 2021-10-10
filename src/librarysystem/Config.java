@@ -8,16 +8,16 @@ public class Config {
     public static final int APP_WIDTH = 900;
     public static final int APP_HEIGHT = 600;
     public static final int DIVIDER = 200;
-    public static  final Font DEFUALT_FONT = new java.awt.Font("Tahoma", 1, 15);
+    public static  final Font DEFUALT_FONT = new java.awt.Font("Tahoma", 1, 13);
 
 
     public static final String[] ALL_MENU = {
+
+            "DashBoard",
             "Add member",
             "Add book",
             "Add book copy",
             "Search member",
-            "All book ids",
-            "All member ids",
             "Checkout book",
             "Checkout status",
             "Search book",
@@ -26,22 +26,21 @@ public class Config {
             "Logout",
     };
     public static final String[] LIBRARIAN_MENU = {
+            "Dashboard",
             "Search member",
-            "All book ids",
-            "All member ids",
-            "Checkout book",
-            "Checkout status",
             "Search book",
+            "Checkout book",
+            "OverDue",
             "Search member checkouts",
             "Logout",
     };
 
     public static final String[] ADMIN_MENU = {
+            "Dashboard",
             "Add member",
             "Add book",
             "Add book copy",
             "Search member",
-            "All member ids",
             "Search book",
             "Update/Delete member",
             "Logout",

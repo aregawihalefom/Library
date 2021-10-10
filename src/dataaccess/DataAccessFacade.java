@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
@@ -58,15 +59,18 @@ public class DataAccessFacade implements DataAccess {
 	public void saveCheckout(String memberId , CheckOutRecord record){
 		// first read the file
 		HashMap<String, CheckOutRecord> chekOutRecordHashMap = readCheckOutRecord();
+
+		if(chekOutRecordHashMap == null)
+			chekOutRecordHashMap = new HashMap<>();
+
 		chekOutRecordHashMap.put(memberId, record);
 		saveToStorage(StorageType.CHECKOUT, chekOutRecordHashMap);
 	}
 
 	@SuppressWarnings("unchecked")
-	private HashMap<String, CheckOutRecord> readCheckOutRecord() {
+	public HashMap<String, CheckOutRecord> readCheckOutRecord() {
 		//Returns a Map with name/value pairs being
 		//   memberID -> CheckOutRecord
-
 		return (HashMap<String,CheckOutRecord>) readFromStorage(StorageType.CHECKOUT);
 	}
 

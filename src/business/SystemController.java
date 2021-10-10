@@ -22,10 +22,11 @@ import javax.swing.table.DefaultTableModel;
 public class SystemController implements ControllerInterface {
 
 	public static Auth currentAuth = null;
+	private DataAccess da = new DataAccessFacade();
 
 	public void login(String id, String password) throws LoginException {
 
-		DataAccess da = new DataAccessFacade();
+		
 		HashMap<String, User> map = da.readUserMap();
 
 		if(!map.containsKey(id)) {
@@ -61,7 +62,7 @@ public class SystemController implements ControllerInterface {
 	}
 	@Override
 	public List<String> allMemberIds() {
-		DataAccess da = new DataAccessFacade();
+		
 		List<String> retval = new ArrayList<>();
 		retval.addAll(da.readMemberMap().keySet());
 		return retval;
@@ -69,7 +70,7 @@ public class SystemController implements ControllerInterface {
 	
 	@Override
 	public List<String> allBookIds() {
-		DataAccess da = new DataAccessFacade();
+		
 		List<String> retval = new ArrayList<>();
 		List<Book> retBook = new ArrayList<>();
 
@@ -82,19 +83,15 @@ public class SystemController implements ControllerInterface {
 	 * @param member
 	 */
 	public void saveLibraryMember(LibraryMember member){
-		DataAccess da = new DataAccessFacade();
 		da.saveNewMember(member);
 	}
 
 	@Override
-	public boolean addBook(String isbn , String title , int maxBorrowDays, ArrayList<Author> authors) throws BookCopyException {
+	public boolean addBook(String isbn , String title , int maxBorrowDays, List<Author> authors) throws BookCopyException {
 
 		Book book = new Book(isbn, title, maxBorrowDays, authors);
 		book.addCopy();
-
 		BookController bookController = new BookController();
-		if(bookController.bookAlreadyAdded(book.getIsbn(), allBookIds()))
-			throw  new BookCopyException("Book with ISBN = " + book.getIsbn() + " already exists.");
 		bookController.addNewBook(book);
 
 		return true;
@@ -115,9 +112,9 @@ public class SystemController implements ControllerInterface {
 		return true;
 	}
 
-	@Override
+	
 	public HashMap<String, LibraryMember> getMembers() {
-		DataAccess da = new DataAccessFacade();
+		
 		return da.readMemberMap();
 	}
 
@@ -137,9 +134,10 @@ public class SystemController implements ControllerInterface {
 
 	@Override
 	public HashMap<String, Book> getBooks() {
-		 DataAccess da = new DataAccessFacade();
+		 
 		 return da.readBooksMap();
 	}
+
 
 	public Address addAddress(String street, String city , String state , String zip){
 		return new Address(street, city, state, zip);
@@ -148,13 +146,5 @@ public class SystemController implements ControllerInterface {
 	@Override
 	public LibraryMember addLibraryMember(String memberNumber, String firstName, String lastName, String phoneNumber, Address address) {
 		return new LibraryMember(memberNumber, firstName, lastName, phoneNumber, address);
-	}
-
-	@Override
-	public void saveCheckout(String memberId, CheckOutRecord record) {
-
-		DataAccess da = new DataAccessFacade();
-		da.saveCheckout(memberId, record);
-
 	}
 }

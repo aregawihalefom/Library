@@ -37,4 +37,6 @@ final public class CheckOutEntry implements  Serializable {
     public BookCopy getCopy() {
         return copy;
     }
+
+
 }

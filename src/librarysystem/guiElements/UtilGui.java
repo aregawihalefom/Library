@@ -1,6 +1,7 @@
 package librarysystem.guiElements;
 
 import librarysystem.*;
+import librarysystem.LibrarianDashboard;
 
 public class UtilGui {
 

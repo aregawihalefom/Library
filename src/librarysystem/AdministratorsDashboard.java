@@ -1,53 +1,55 @@
 package librarysystem;
 
 import business.*;
-import librarysystem.guiElements.BookGui;
-import librarysystem.guiElements.MemberUI;
+import librarysystem.guiElements.*;
+import librarysystem.guiElements.EditOrDeleteMember;
+import librarysystem.guiElements.book.BookGui;
+import librarysystem.guiElements.book.SearchBookPanel;
+import librarysystem.guiElements.member.MemberUI;
+import librarysystem.guiElements.member.SearchMemberPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class AdministratorsDashboard extends JFrame implements LibWindow {
 
     private static final long serialVersionUID = 1L;
-    public static  AdministratorsDashboard INSTANCE = new AdministratorsDashboard();
+
+    public static final AdministratorsDashboard INSTANCE = new AdministratorsDashboard();
+    ControllerInterface ci = new SystemController();
+
     private boolean isInitialized = false;
 
-    private  JPanel addBookPanel;
-    private  JPanel addMemberPanel;
-    private  JPanel addCopyPanel;
-
-    private  JPanel adminDashobardPanel;
-    private  JPanel mainPanel;
-
-    private static MemberUI memberGui;
-    private static BookGui bookGui;
-
-    private String[] copyAttributes = {"Copy Number", "Book ISBN"};
-    private JTextField[] copyFields = new JTextField[copyAttributes.length];
-    public static  String[] sideBarItems;
-
-    public JTable memberListJTable, bookListJTable;
-    ListItem item1, item2 , item3, item4;
     JList<ListItem> linkList;
     JPanel cards;
 
+    List<ListItem> itemList = new ArrayList<>();
+
+    private  JPanel adminDashobardPanel;
+    public JTable memberListJTable,bookListJTable;
+
     //Singleton class
     private AdministratorsDashboard() {
-
-        UIController.INSTANCE.admin  = this;
         setSize(Config.APP_WIDTH, Config.APP_HEIGHT);
-        sideBarItems = new String[]{"Admin Dashboard", "Add New Member", "Add New Book", "Add Copy"};
+        UIController.INSTANCE.admin = this;
+        memberListJTable = MemberUI.INSTANCE.getMemberList();
+        bookListJTable = BookGui.INSTANCE.getBookList();
+    }
 
-        // list items which will be added to the ListModel for linkList
-        item1 = new ListItem(sideBarItems[0], true);
-        item2 = new ListItem(sideBarItems[1], true);
-        item3 = new ListItem(sideBarItems[2], true);
-        item4 = new ListItem(sideBarItems[3], true);
+    public void constructSideBarMenu(){
+
+        for(String item : Config.ADMIN_MENU){
+            itemList.add(new ListItem(item, true));
+        }
     }
 
     public void init() {
+
+        // Construct sideBarMenu ListItems
+        constructSideBarMenu();
 
         // Create sidebar
         createLinkLabels();
@@ -62,7 +64,7 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
             CardLayout cl = (CardLayout) (cards.getLayout());
 
             if (!allowed) {
-                value = item1.getItemName();
+                value = itemList.get(0).getItemName();
                 linkList.setSelectedIndex(0);
             }
             cl.show(cards, value);
@@ -76,83 +78,102 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, linkList, cards);
         splitPane.setDividerLocation(Config.DIVIDER);
 
-        mainPanel = new JPanel(new FlowLayout());
+        JPanel mainPanel = new JPanel(new FlowLayout());
         mainPanel.add(splitPane);
+
         add(splitPane);
         isInitialized = true;
+        // this.setResizable(false);
+        centerFrameOnDesktop(this);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    }
+
+    public static void centerFrameOnDesktop(Component f) {
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        int height = toolkit.getScreenSize().height;
+        int width = toolkit.getScreenSize().width;
+        int frameHeight = f.getSize().height;
+        int frameWidth = f.getSize().width;
+        f.setLocation(((width - frameWidth) / 2), (height - frameHeight) / 3);
     }
 
     public void createMainPanels() {
 
-        // Add member panel
-        memberGui = MemberUI.INSTANCE;
-        addMemberPanel = memberGui.getAddMemberPanel();
+        // create admin panel
+        setAdminDashboardPanel();
 
-        // Add ddBookForm()
-        bookGui = BookGui.INSTANCE;
-        addBookPanel = bookGui.getAddBookPanel();
+        // Assign crossponding panels to crsossponding Cards
+        setCards();
 
-        // Set tabPanel
-        setTabPanel();
-
-        // Add copy panel
-        addBookCopyForm();
-
-        cards = new JPanel(new CardLayout());
-        cards.add(adminDashobardPanel, item1.getItemName());
-        cards.add(addMemberPanel, item2.getItemName());
-        cards.add(addBookPanel, item3.getItemName());
-        cards.add(addCopyPanel, item4.getItemName());
     }
 
-    public void setTabPanel() {
+    public void setCards(){
 
-        // create addmin panel
+        // book related panels
+        JPanel searchBookPanel = SearchBookPanel.INSTANCE.getSearchBookPanel();
+        JPanel addBookPanel = BookGui.INSTANCE.getAddBookPanel();
+        JPanel addBookCopyPanel = new JPanel();
+
+        // member related panels
+        JPanel searchMemberPanel = SearchMemberPanel.INSTANCE.getsearchMemberPanel();
+        JPanel addMemberPanel = MemberUI.INSTANCE.getAddMemberPanel();
+        JPanel editOrDeletePanel = EditOrDeleteMember.INSTANCE.getEditOrDeletePanel();
+
+        // logout panel
+        JPanel logoutPanel = Logout.INSTANCE.getLoginPanel();
+
+        // Dashboard panel
+        cards = new JPanel(new CardLayout());
+        cards.add(adminDashobardPanel, itemList.get(0).getItemName());
+        cards.add(addMemberPanel, itemList.get(1).getItemName());
+        cards.add(addBookPanel, itemList.get(2).getItemName());
+        cards.add(addBookCopyPanel, itemList.get(3).getItemName());
+        cards.add(searchMemberPanel, itemList.get(4).getItemName());
+        cards.add(searchBookPanel, itemList.get(5).getItemName());
+        cards.add(editOrDeletePanel, itemList.get(6).getItemName());
+        cards.add(logoutPanel, itemList.get(7).getItemName());
+
+
+    }
+
+
+    public void setAdminDashboardPanel() {
+
+        // create  panel
         adminDashobardPanel = new JPanel(new BorderLayout());
-        adminDashobardPanel.add(new JLabel("Admin dashboard"), BorderLayout.NORTH);
+        adminDashobardPanel.add(new JLabel("Adminstrator Dashboard"), BorderLayout.NORTH);
 
-        // Two tables
-        memberListJTable = memberGui.getMemberList();
-        bookListJTable = bookGui.getBookList();;
-
-        JPanel p3 = new JPanel();
-        JLabel bookList =new JLabel("Book  copy List");
-        p3.add(bookList);
 
         JTabbedPane tp=new JTabbedPane();
         tp.setPreferredSize(new Dimension(Config.APP_WIDTH - Config.DIVIDER, Config.APP_HEIGHT));
-        tp.add("Members",memberListJTable);
-        tp.add("Books",bookListJTable);
-        tp.add("Book Copies",p3);
+        tp.add("Books",new JScrollPane(bookListJTable));
+        tp.add("Members", new JScrollPane(memberListJTable));
         tp.setFont(Config.DEFUALT_FONT);
         tp.setForeground(Util.LINK_AVAILABLE);
         tp.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         adminDashobardPanel.add(tp , BorderLayout.CENTER);
-
     }
 
-    private void addBookCopyForm() {
+    @Override
+    public boolean isInitialized() {
+        return isInitialized;
+    }
 
-       addCopyPanel = new JPanel(new BorderLayout());
+    @Override
+    public void isInitialized(boolean val) {
+        isInitialized = val;
 
-        // add add button
-        JButton addBookBtn = new JButton("Add Book");
-       // addBookBtn.addActionListener(new addBookListiner());
-        JPanel addBookBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        addBookBtnPanel.add(addBookBtn);
-
-        // add to book Panel at the bottom
-        addCopyPanel.add(addBookBtnPanel, BorderLayout.SOUTH);
     }
 
     @SuppressWarnings("serial")
     public void createLinkLabels() {
 
         DefaultListModel<ListItem> model = new DefaultListModel<>();
-        model.addElement(item1);
-        model.addElement(item2);
-        model.addElement(item3);
-        model.addElement(item4);
+
+        for(ListItem item : itemList){
+            model.addElement(item);
+        }
 
         linkList = new JList<ListItem>(model);
         linkList.setCellRenderer(new DefaultListCellRenderer() {
@@ -187,35 +208,5 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
         });
     }
 
-    public static void main(String[] args) {
-        EventQueue.invokeLater(() ->
-        {
-           AdministratorsDashboard.INSTANCE.setTitle(Config.APP_NAME);
-            AdministratorsDashboard.INSTANCE.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            AdministratorsDashboard.INSTANCE.init();
-            centerFrameOnDesktop(AdministratorsDashboard.INSTANCE);
-            AdministratorsDashboard.INSTANCE.setVisible(true);
-        });
-    }
-
-    public static void centerFrameOnDesktop(Component f) {
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        int height = toolkit.getScreenSize().height;
-        int width = toolkit.getScreenSize().width;
-        int frameHeight = f.getSize().height;
-        int frameWidth = f.getSize().width;
-        f.setLocation(((width - frameWidth) / 2), (height - frameHeight) / 3);
-    }
-
-    @Override
-    public boolean isInitialized() {
-        return isInitialized;
-    }
-
-    @Override
-    public void isInitialized(boolean val) {
-        isInitialized = val;
-
-    }
 
 }

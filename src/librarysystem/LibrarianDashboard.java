@@ -1,9 +1,15 @@
 package librarysystem;
 
 import business.*;
-import librarysystem.guiElements.CheckOutGui;
+import librarysystem.guiElements.book.BookGui;
+import librarysystem.guiElements.checkOut.CheckOutGui;
+import librarysystem.guiElements.Logout;
+import librarysystem.guiElements.member.MemberUI;
+import librarysystem.guiElements.book.SearchBookPanel;
 import librarysystem.guiElements.checkOut.CheckOutBookPanel;
-import librarysystem.guiElements.checkOut.ChekOutStatusPanel;
+import librarysystem.guiElements.checkOut.OverDuePanel;
+import librarysystem.guiElements.checkOut.PrintMemberCheckOut;
+import librarysystem.guiElements.member.SearchMemberPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,56 +26,33 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
 
     private boolean isInitialized = false;
 
-    private JPanel librarianDashobardPanel;
-    private JPanel mainPanel;
-
-    // member related panels
-    private JPanel searchMemberPanel, allMemberIdsPanel;
-
-    // book related panels
-    private JPanel searBookPanel , allBookIdsPanel;
-
-    // checkoutRelated Panels
-    private JPanel checkOutBookPanel , searchMemberCheckOutPanel, checkOutStatusPanel;
-
-    // logout panel
-    private JPanel logoutPanel;
-
-
-    public static final String[] LIBRARIAN_MENU = {
-            "Search member",
-            "Search book",
-            "Checkout book",
-            "Checkout status",
-            "Search member checkouts",
-            "All member ids",
-            "All book ids",
-            "Logout",
-    };
-
-
     JList<ListItem> linkList;
     JPanel cards;
 
     private String[] copyAttributes = {"Copy Number", "Book ISBN"};
     private JTextField[] copyFields = new JTextField[copyAttributes.length];
-
     List<ListItem> itemList = new ArrayList<>();
+
+    private JPanel librarianDashobardPanel;
+    public JTable memberListJTable,bookListJTable, checkOutList;
 
     //Singleton class
     private LibrarianDashboard() {
         setSize(Config.APP_WIDTH, Config.APP_HEIGHT);
+        memberListJTable = MemberUI.INSTANCE.getMemberList();
+        bookListJTable = BookGui.INSTANCE.getBookList();
+        checkOutList = CheckOutGui.INSTANCE.getCheckOutList();
+        UIController.INSTANCE.librarianDashboard = this;
     }
 
-    public void constructSideBarMenu()
-    {
+    public void constructSideBarMenu(){
+
         for(String item : Config.LIBRARIAN_MENU){
             itemList.add(new ListItem(item, true));
         }
-
     }
-    public void init() {
 
+    public void init() {
 
         // Construct sideBarMenu ListItems
         constructSideBarMenu();
@@ -101,19 +84,30 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, linkList, cards);
         splitPane.setDividerLocation(Config.DIVIDER);
 
-        mainPanel = new JPanel(new FlowLayout());
+        JPanel mainPanel = new JPanel(new FlowLayout());
         mainPanel.add(splitPane);
 
         add(splitPane);
         isInitialized = true;
-        this.setResizable(false);
+       // this.setResizable(false);
+        centerFrameOnDesktop(this);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+    }
+
+    public static void centerFrameOnDesktop(Component f) {
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        int height = toolkit.getScreenSize().height;
+        int width = toolkit.getScreenSize().width;
+        int frameHeight = f.getSize().height;
+        int frameWidth = f.getSize().width;
+        f.setLocation(((width - frameWidth) / 2), (height - frameHeight) / 3);
     }
 
     public void createMainPanels() {
 
         // create admin panel
-        addLibrarianDashBoardPanel();
+        setLibrarianDashboardPanel();
 
         // Assign crossponding panels to crsossponding Cards
         setCards();
@@ -122,21 +116,50 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
 
     public void setCards(){
 
-        // add checkout panel
-        checkOutBookPanel = CheckOutBookPanel.INSTANCE.getCheckOutPanel();
+        // Checkout
+        // checkoutRelated Panels
+        JPanel checkOutBookPanel = CheckOutBookPanel.INSTANCE.getCheckOutPanel();
+        JPanel checkOutStatusPanel = OverDuePanel.INSTANCE.getSearchOverDuePanel();
+        JPanel searchMemberCheckOutPanel = PrintMemberCheckOut.INSTANCE.getPrintMemberCheckOutPanel();
+
+        // book related panels
+        JPanel searchBookPanel = SearchBookPanel.INSTANCE.getSearchBookPanel();
+
+        // member related panels
+        JPanel searchMemberPanel = SearchMemberPanel.INSTANCE.getsearchMemberPanel();
+
+        // logout panel
+        JPanel logoutPanel = Logout.INSTANCE.getLoginPanel();
+
 
         cards = new JPanel(new CardLayout());
         cards.add(librarianDashobardPanel, itemList.get(0).getItemName());
-        cards.add(checkOutBookPanel, itemList.get(0).getItemName());
+        cards.add(searchMemberPanel, itemList.get(1).getItemName());
+        cards.add(searchBookPanel, itemList.get(2).getItemName());
+        cards.add(checkOutBookPanel, itemList.get(3).getItemName());
+        cards.add(checkOutStatusPanel, itemList.get(4).getItemName());
+        cards.add(searchMemberCheckOutPanel, itemList.get(5).getItemName());
+        cards.add(logoutPanel, itemList.get(6).getItemName());
 
     }
 
-    private void addLibrarianDashBoardPanel() {
 
+    public void setLibrarianDashboardPanel() {
+
+        // create  panel
         librarianDashobardPanel = new JPanel(new BorderLayout());
         librarianDashobardPanel.add(new JLabel("Librarian Dashboard"), BorderLayout.NORTH);
-        JScrollPane memberListPanel = CheckOutGui.INSTANCE.getCheckOutList();
-        librarianDashobardPanel.add(memberListPanel ,BorderLayout.CENTER);
+
+
+        JTabbedPane tp=new JTabbedPane();
+        tp.setPreferredSize(new Dimension(Config.APP_WIDTH - Config.DIVIDER, Config.APP_HEIGHT));
+        tp.add("Checkouts", new JScrollPane(checkOutList));
+        tp.add("Books",new JScrollPane(bookListJTable));
+        tp.add("Members", new JScrollPane(memberListJTable));
+        tp.setFont(Config.DEFUALT_FONT);
+        tp.setForeground(Util.LINK_AVAILABLE);
+        tp.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+        librarianDashobardPanel.add(tp , BorderLayout.CENTER);
     }
 
     @Override

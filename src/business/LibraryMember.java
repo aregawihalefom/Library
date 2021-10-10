@@ -22,6 +22,7 @@ final public class LibraryMember extends Person implements Serializable {
 	 */
 
 	public void addCheckoutRecord(BookCopy copy){
+
 		record.addCheckOutEntry(copy);
 	}
 

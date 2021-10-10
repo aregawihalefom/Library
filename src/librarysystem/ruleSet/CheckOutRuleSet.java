@@ -1,24 +1,26 @@
 package librarysystem.ruleSet;
 
-import librarysystem.LoginScreen;
-import librarysystem.guiElements.CheckOutGui;
+import librarysystem.guiElements.checkOut.CheckOutBookPanel;
+import librarysystem.guiElements.checkOut.OverDuePanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
 
 public class CheckOutRuleSet implements RuleSet{
 
-    private CheckOutGui checkOutGui;
+    private CheckOutBookPanel checkOutGui;
 
     @Override
     public void applyRules(Component ob) throws RuleException {
-        checkOutGui = (CheckOutGui) ob;
+        checkOutGui = (CheckOutBookPanel) ob;
         nonemptyRule();
     }
 
     private void nonemptyRule() throws RuleException {
-        if(checkOutGui.getCheckOutFields()[0].getText().isEmpty() || checkOutGui.getCheckOutFields()[0].getText().isEmpty())
-            throw new RuleException("All fields must be non-empty");
+
+        for(JTextField jTextField : checkOutGui.getCheckOutFields()){
+            if(jTextField.getText().isEmpty())
+                throw new RuleException("All fields must be non-empty");
+        }
     }
 }

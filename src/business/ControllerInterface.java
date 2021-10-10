@@ -14,7 +14,7 @@ public interface ControllerInterface {
 	List<String> allBookIds();
 
 	void saveLibraryMember(LibraryMember member) throws LibraryMemberException;
-	boolean addBook(String isbn, String  title, int maxBorrowDays, ArrayList<Author> authors) throws BookCopyException;
+	boolean addBook(String isbn, String  title, int maxBorrowDays, List<Author> authors) throws BookCopyException;
 	boolean addBookCopy(String ISBN, int copyNumber) throws BookCopyException;
 
 	HashMap<String, LibraryMember> getMembers();
@@ -25,5 +25,4 @@ public interface ControllerInterface {
 	Address addAddress(String street , String city , String state , String zip);
 	LibraryMember addLibraryMember(String memberNumber , String firstName , String lastName , String phoneNumber , Address address);
 
-	void saveCheckout(String memberId, CheckOutRecord record);
 }

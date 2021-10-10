@@ -1,4 +1,4 @@
-package librarysystem.guiElements;
+package librarysystem.guiElements.checkOut;
 
 import business.*;
 import business.exceptions.*;
@@ -9,13 +9,13 @@ import librarysystem.Util;
 import librarysystem.ruleSet.*;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class CheckOutGui extends JPanel{
 
@@ -29,7 +29,9 @@ public class CheckOutGui extends JPanel{
 
     public static final CheckOutGui INSTANCE = new CheckOutGui();
 
-    CheckOutGui() {  addCheckoutForm();}
+    CheckOutGui() {
+        addCheckoutForm();
+    }
 
     private ControllerInterface ci = new SystemController();
 
@@ -77,29 +79,22 @@ public class CheckOutGui extends JPanel{
         return nameForm;
     }
 
-    public  JScrollPane getCheckOutList() {
+    public  JTable getCheckOutList() {
 
-        System.out.println(ci.getMembers());
         String column[]={"Member ID","ISBN","Checkout Date", "Due Date"};
         HashMap<String , LibraryMember> libraryMemberHashMap = ci.getMembers();
+        DefaultTableModel model = new DefaultTableModel(null, column);
+        if( libraryMemberHashMap !=null){
 
-        String memberData [][] = new String[libraryMemberHashMap.size()][column.length];
-        List<String> memberID = ci.allMemberIds();
-
-        for(int i = 0 ; i < memberID.size(); i++){
-
-            LibraryMember member = libraryMemberHashMap.get(memberID.get(i));
-            memberData[i][0] = member.getMemberId();
-            memberData[i][1] = String.valueOf(member.getRecord().getEntries().toString());
-
-//            bookData[i][2] = book.getAuthors().toString();
-//            bookData[i][3] = ""+book.getMaxCheckoutLength();
-//            bookData[i][4] = ""+book.getNumCopies();
+            for(String key : libraryMemberHashMap.keySet()){
+                LibraryMember member = libraryMemberHashMap.get(key);
+                for(CheckOutEntry entry : member.getRecord().getEntries()){
+                    model.addRow(new  Object[]{ key , entry.getCopy().getBook().getIsbn(),entry.getCheckOutDate(), entry.getDueDate()});
+                }
+            }
         }
 
-        JTable jt=new JTable(memberData,column);
-        JScrollPane sp=new JScrollPane(jt);
-        return sp;
+        return new JTable(model);
 
     }
 

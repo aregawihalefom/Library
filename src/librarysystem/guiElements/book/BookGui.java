@@ -4,9 +4,8 @@ import business.*;
 import business.exceptions.BookCopyException;
 import librarysystem.Config;
 import librarysystem.Messages;
-import librarysystem.UIController;
 import librarysystem.Util;
-import librarysystem.guiElements.member.MemberUI;
+import librarysystem.guiElements.UtilGui;
 import librarysystem.ruleSet.RuleException;
 import librarysystem.ruleSet.RuleSet;
 import librarysystem.ruleSet.RuleSetFactory;
@@ -63,41 +62,53 @@ public class BookGui extends JPanel{
 
     private void addBookForm() {
 
-        addBookPanel = new JPanel(new BorderLayout());
         JLabel panelTitle = new JLabel(" Add New Book");
         panelTitle.setFont(Config.DEFUALT_FONT);
         panelTitle.setForeground(Util.DARK_BLUE);
-        addBookPanel.add(panelTitle , BorderLayout.NORTH);
+
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        titlePanel.add(new JSeparator(JSeparator.HORIZONTAL), BorderLayout.NORTH);
+        titlePanel.add(panelTitle, BorderLayout.CENTER);
+        titlePanel.add(new JSeparator(JSeparator.HORIZONTAL), BorderLayout.SOUTH);
 
         JPanel addFormPanel = createAddBookForm();
-        addBookPanel.add(addFormPanel , BorderLayout.CENTER);
 
         // add add button
         JButton addBBookBtn = new JButton("Add Book");
+        addBBookBtn.setPreferredSize(UtilGui.BTN_DIMENSION);
         addBBookBtn.addActionListener(new addBookListiner());
-        JPanel addBookBtnPanel = new JPanel(new BorderLayout());
-        addBookBtnPanel.add(addBBookBtn, BorderLayout.CENTER);
+        JPanel addBookBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        addBookBtnPanel.add(addBBookBtn);
 
-        // add to book Panel at the bottom
-        addBookPanel.add(addBookBtnPanel, BorderLayout.SOUTH);
 
+        JPanel container = new JPanel(new BorderLayout());
+        container.setPreferredSize(UtilGui.PANEL_DIMENSION);
+
+        // combine
+        container.add(titlePanel, BorderLayout.NORTH);
+        container.add(new JScrollPane());
+        container.add(addFormPanel, BorderLayout.CENTER);
+        container.add(addBookBtnPanel, BorderLayout.SOUTH);
+
+        // add this to the current
+        this.add(container);
     }
 
-    public  JPanel getAddBookPanel(){ return addBookPanel; }
+    public  JPanel getAddBookPanel(){ return this; }
 
     private JPanel getElementWithLabelBook(String labelName, int jtextFieldIndex) {
 
         JLabel label = new JLabel(" " + labelName);
         JPanel labelPanel = new JPanel(new BorderLayout());
-        labelPanel.add(label, BorderLayout.NORTH);
+        labelPanel.add(label, BorderLayout.CENTER);
 
         bookFields[jtextFieldIndex] = new JTextField(20);
         JPanel formPanel = new JPanel(new BorderLayout());
-        formPanel.add(bookFields[jtextFieldIndex], BorderLayout.NORTH);
+        formPanel.add(bookFields[jtextFieldIndex], BorderLayout.CENTER);
 
         JPanel nameForm = new JPanel(new BorderLayout());
-        nameForm.add(labelPanel, BorderLayout.NORTH);
-        nameForm.add(formPanel, BorderLayout.CENTER);
+        nameForm.add(labelPanel, BorderLayout.WEST);
+        nameForm.add(formPanel, BorderLayout.EAST);
 
         return nameForm;
     }

@@ -44,11 +44,16 @@ public class EditOrDeleteMember extends JPanel{
         panelTitle.setFont(Config.DEFUALT_FONT);
         panelTitle.setForeground(Util.DARK_BLUE);
 
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        titlePanel.add(new JSeparator(JSeparator.HORIZONTAL), BorderLayout.NORTH);
+        titlePanel.add(panelTitle, BorderLayout.CENTER);
+        titlePanel.add(new JSeparator(JSeparator.HORIZONTAL), BorderLayout.SOUTH);
+
         // Middle form
         JPanel memberFormPanel = createMemberForm();
 
-        JButton addBMemberBtn = new JButton("Edit");
-        addBMemberBtn.addActionListener(new EditMember());
+        JButton editMemberBtn = new JButton("Edit");
+        editMemberBtn.addActionListener(new EditMember());
 
         JButton searchMemberBtn = new JButton("Search");
         searchMemberBtn.addActionListener(new SearchMember());
@@ -57,15 +62,17 @@ public class EditOrDeleteMember extends JPanel{
         deleteBtn.setForeground(Color.red);
         deleteBtn.addActionListener(new DeleteMember());
 
-        memberFormPanel.add(searchMemberBtn);
-        memberFormPanel.add(addBMemberBtn);
-        memberFormPanel.add(deleteBtn);
+        JPanel btnSPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        btnSPanel.add(searchMemberBtn);
+        btnSPanel.add(editMemberBtn);
+        btnSPanel.add(deleteBtn);
+
 
         // top panel
         JPanel combine = new JPanel(new BorderLayout());
-        combine.add(panelTitle, BorderLayout.NORTH);
+        combine.add(titlePanel, BorderLayout.NORTH);
         combine.add(memberFormPanel, BorderLayout.CENTER);
-
+        combine.add(btnSPanel, BorderLayout.SOUTH);
 
         this.add(combine);
     }
@@ -83,15 +90,15 @@ public class EditOrDeleteMember extends JPanel{
 
         JLabel label = new JLabel(" " + labelName);
         JPanel labelPanel = new JPanel(new BorderLayout());
-        labelPanel.add(label, BorderLayout.NORTH);
+        labelPanel.add(label, BorderLayout.CENTER);
 
         memberFields[jtextFieldIndex] = new JTextField(20);
         JPanel formPanel = new JPanel(new BorderLayout());
-        formPanel.add(memberFields[jtextFieldIndex], BorderLayout.NORTH);
+        formPanel.add(memberFields[jtextFieldIndex], BorderLayout.CENTER);
 
         JPanel nameForm = new JPanel(new BorderLayout());
-        nameForm.add(labelPanel, BorderLayout.NORTH);
-        nameForm.add(formPanel, BorderLayout.CENTER);
+        nameForm.add(labelPanel, BorderLayout.WEST);
+        nameForm.add(formPanel, BorderLayout.EAST);
 
         return nameForm;
     }

@@ -67,7 +67,6 @@ public class MemberUI extends JPanel{
 
         // combine
         container.add(titlePanel, BorderLayout.NORTH);
-        container.add(new JScrollPane());
         container.add(memberFormPanel, BorderLayout.CENTER);
         container.add(btnPanel, BorderLayout.SOUTH);
 

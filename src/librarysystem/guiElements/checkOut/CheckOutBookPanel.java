@@ -7,6 +7,8 @@ import librarysystem.Config;
 import librarysystem.Messages;
 import librarysystem.UIController;
 import librarysystem.Util;
+import librarysystem.guiElements.UtilGui;
+import librarysystem.guiElements.member.MemberUI;
 import librarysystem.ruleSet.*;
 
 import javax.swing.*;
@@ -23,7 +25,6 @@ public class CheckOutBookPanel extends JPanel{
         return checkOutFields;
     }
     private final JTextField[] checkOutFields = new JTextField[checkOutAttributes.length];
-    private JPanel addCheckoutForm;
 
     public static final CheckOutBookPanel INSTANCE = new CheckOutBookPanel();
 
@@ -32,45 +33,55 @@ public class CheckOutBookPanel extends JPanel{
     private ControllerInterface ci = new SystemController();
 
     public  JPanel getCheckOutPanel() {
-        return addCheckoutForm;
+        return this;
     }
 
     private void addCheckoutForm() {
 
-        addCheckoutForm = new JPanel(new BorderLayout());
 
-        // Panel Title
-        JLabel panelTitle = new JLabel(" CheckOut Book ");
-        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        titlePanel.add(new JSeparator(JSeparator.HORIZONTAL));
-        titlePanel.add(panelTitle);
+        JLabel panelTitle = new JLabel(" Book checkout form");
         panelTitle.setFont(Config.DEFUALT_FONT);
         panelTitle.setForeground(Util.DARK_BLUE);
-        addCheckoutForm.add(titlePanel , BorderLayout.NORTH);
 
-        JPanel checkOutPanel = createCheckOutForm();
-        addCheckoutForm.add(checkOutPanel , BorderLayout.CENTER);
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        titlePanel.add(new JSeparator(JSeparator.HORIZONTAL), BorderLayout.NORTH);
+        titlePanel.add(panelTitle, BorderLayout.CENTER);
+        titlePanel.add(new JSeparator(JSeparator.HORIZONTAL), BorderLayout.SOUTH);
+
+        JPanel checkoutF = createCheckOutForm();
 
         // add add button
-        JButton checkoutBtn = new JButton("Check Out");
-        checkoutBtn.addActionListener(new checkOutListener());
-        checkOutPanel.add(checkoutBtn);
+        JButton addBMemberBtn = new JButton("Checkout");
+
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        addBMemberBtn.setPreferredSize(UtilGui.BTN_DIMENSION);
+        addBMemberBtn.addActionListener(new checkOutListener());
+        btnPanel.add(addBMemberBtn);
+
+        JPanel container = new JPanel(new BorderLayout());
+        //container.setPreferredSize(UtilGui.PANEL_DIMENSION);
+
+        // combine
+        container.add(titlePanel, BorderLayout.NORTH);
+        container.add(checkoutF, BorderLayout.CENTER);
+        container.add(btnPanel, BorderLayout.SOUTH);
 
 
-        // add to book Panel at the bottom
-        addCheckoutForm.add(checkoutBtn, BorderLayout.SOUTH);
-
+        this.add(container);
     }
-
-
-    private JPanel getElementWithLabel(String labelName, int jtextFieldIndex) {
+    private JPanel getElementWithLabelMember(String labelName, int jtextFieldIndex) {
 
         JLabel label = new JLabel(" " + labelName);
-        checkOutFields[jtextFieldIndex] = new JTextField(20);
+        JPanel labelPanel = new JPanel(new BorderLayout());
+        labelPanel.add(label, BorderLayout.NORTH);
 
-        JPanel nameForm = new JPanel();
-        nameForm.add(label);
-        nameForm.add(checkOutFields[jtextFieldIndex]);
+        checkOutFields[jtextFieldIndex] = new JTextField(20);
+        JPanel formPanel = new JPanel(new BorderLayout());
+        formPanel.add(checkOutFields[jtextFieldIndex], BorderLayout.NORTH);
+
+        JPanel nameForm = new JPanel(new BorderLayout());
+        nameForm.add(labelPanel, BorderLayout.WEST);
+        nameForm.add(formPanel, BorderLayout.EAST);
 
         return nameForm;
     }
@@ -78,9 +89,9 @@ public class CheckOutBookPanel extends JPanel{
 
     private JPanel createCheckOutForm() {
 
-        JPanel checkoutFormPanel = new JPanel();
+        JPanel checkoutFormPanel = new JPanel(new GridLayout(checkOutFields.length , 0));
         for (int i = 0; i < checkOutFields.length; i++) {
-            checkoutFormPanel.add(getElementWithLabel(checkOutAttributes[i], i));
+            checkoutFormPanel.add(getElementWithLabelMember(checkOutAttributes[i], i));
         }
         return checkoutFormPanel;
     }
@@ -146,7 +157,7 @@ public class CheckOutBookPanel extends JPanel{
                 // update the tables
                 // "Member ID","ISBN","Checkout Date", "Due Date"
                 CheckOutEntry entry = member.getRecord().getEntries().get( member.getRecord().getEntries().size()-1);
-                DefaultTableModel model = (DefaultTableModel) UIController.INSTANCE.librarianDashboard.checkOutList.getModel();
+                DefaultTableModel model = (DefaultTableModel) UIController.INSTANCE.bothDashboard.checkOutList.getModel();
                 model.insertRow(0, new  Object[]{ member.getMemberId() , book.getIsbn(),  entry.getCheckOutDate(), entry.getDueDate()});
 
                 // successful

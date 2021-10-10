@@ -35,14 +35,14 @@ public class SystemController implements ControllerInterface {
 			throw new LoginException("Username/Password combination is incorrect");
 		}
 		currentAuth = map.get(id).getAuthorization();
-
 		UtilGui.hideAllWindows();
 
-		if(currentAuth.name().equals("LIBRARIAN")){
 
+		if(currentAuth.name().equals("LIBRARIAN")){
 			if(!LibrarianDashboard.INSTANCE.isInitialized()){
 				LibrarianDashboard.INSTANCE.init();
 			}
+
 			LibrarianDashboard.INSTANCE.setVisible(true);
 		}
 		else if(currentAuth.name().equals("ADMIN")){

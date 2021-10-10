@@ -15,6 +15,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
+import java.sql.SQLOutput;
 import java.time.LocalDate;
 import java.util.HashMap;
 
@@ -134,7 +135,7 @@ public class PrintMemberCheckOut extends JPanel{
                 searchRuleset.applyRules(PrintMemberCheckOut.this);
 
                 String memberId = printMemberFields[0].getText().trim();
-                System.out.println(memberId);
+
                 // check if member already exists
                 if(!ci.allMemberIds().contains(memberId))
                     throw new BookCopyException("No Member  with ID  =  " + printMemberFields[0].getText().trim() + " found");
@@ -147,6 +148,7 @@ public class PrintMemberCheckOut extends JPanel{
                 else{
                     new Messages.InnerFrame().showMessage(counter +" checkouts ready to be printed for Member ID =  " +memberId , "Info");
                     printButton.setEnabled(true);
+
                 }
 
                 clearFormFields();
@@ -167,7 +169,7 @@ public class PrintMemberCheckOut extends JPanel{
             for(String key : libraryMemberHashMap.keySet()){
                 LibraryMember member = libraryMemberHashMap.get(key);
                 for(CheckOutEntry entry : member.getRecord().getEntries()){
-                    model.insertRow(0, new  Object[]{ entry.getCopy().getBook().getIsbn(),  key,  entry.getCopy().getCopyNum(), member.getMemberId()});
+                    model.insertRow(0, new  Object[]{ entry.getCopy().getBook().getIsbn(),  entry.getCopy().getBook().getTitle(),  entry.getCopy().getCopyNum(), member.getMemberId()});
                 }
             }
         }
@@ -175,7 +177,7 @@ public class PrintMemberCheckOut extends JPanel{
         return model;
     }
 
-    // filtered by isbn
+    // filtered by memberID
     int printMembers(String memberId){
 
         HashMap<String , LibraryMember> libraryMemberHashMap = ci.getMembers();
@@ -188,7 +190,14 @@ public class PrintMemberCheckOut extends JPanel{
                 LibraryMember member = libraryMemberHashMap.get(key);
                if(member.getMemberId().equals(memberId))
                 for(CheckOutEntry entry : member.getRecord().getEntries()){
-                    model.insertRow(0, new  Object[]{entry.getCopy().getBook().getIsbn(), key, entry.getCopy().getCopyNum(), member.getMemberId()});
+                    model.insertRow(0, new  Object[]{entry.getCopy().getBook().getIsbn(), entry.getCopy().getBook().getTitle(), entry.getCopy().getCopyNum(), member.getMemberId()});
+
+                    System.out.println("ISBN :" + entry.getCopy().getBook().getIsbn());
+                    System.out.println("Member ID :" + entry.getCopy().getBook().getTitle());
+                    System.out.println("Copy NO :" +entry.getCopy().getCopyNum());
+                    System.out.println("Member ID :" +key);
+                    System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+
                     counter++;
                 }
             }
@@ -204,7 +213,8 @@ public class PrintMemberCheckOut extends JPanel{
             try {
                 myTable.print();
             } catch (PrinterException ex) {
-                ex.printStackTrace();
+                new Messages.InnerFrame().showMessage(ex.getMessage() + " Details printed to console", "Error");
+                ;
             }
         }
     }

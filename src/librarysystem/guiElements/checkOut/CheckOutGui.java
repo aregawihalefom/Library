@@ -81,7 +81,7 @@ public class CheckOutGui extends JPanel{
 
     public  JTable getCheckOutList() {
 
-        String column[]={"Member ID","ISBN","Checkout Date", "Due Date"};
+        String column[]={"Member ID","ISBN","COPY N0.", "CHECKOUT DATE", "DUE DATE"};
         HashMap<String , LibraryMember> libraryMemberHashMap = ci.getMembers();
         DefaultTableModel model = new DefaultTableModel(null, column);
         if( libraryMemberHashMap !=null){
@@ -89,13 +89,11 @@ public class CheckOutGui extends JPanel{
             for(String key : libraryMemberHashMap.keySet()){
                 LibraryMember member = libraryMemberHashMap.get(key);
                 for(CheckOutEntry entry : member.getRecord().getEntries()){
-                    model.addRow(new  Object[]{ key , entry.getCopy().getBook().getIsbn(),entry.getCheckOutDate(), entry.getDueDate()});
+                    model.addRow(new  Object[]{ key , entry.getCopy().getBook().getIsbn(), entry.getCopy().getCopyNum(), entry.getCheckOutDate(), entry.getDueDate()});
                 }
             }
         }
-
         return new JTable(model);
-
     }
 
     private JPanel createCheckOutForm() {

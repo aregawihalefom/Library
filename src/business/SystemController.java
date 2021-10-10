@@ -12,12 +12,10 @@ import dataaccess.DataAccess;
 import dataaccess.DataAccessFacade;
 import dataaccess.User;
 import librarysystem.AdministratorsDashboard;
+import librarysystem.BothDashboard;
 import librarysystem.LibrarianDashboard;
 import librarysystem.LibrarySystem;
-import librarysystem.UIController;
 import librarysystem.guiElements.UtilGui;
-
-import javax.swing.table.DefaultTableModel;
 
 public class SystemController implements ControllerInterface {
 
@@ -39,26 +37,32 @@ public class SystemController implements ControllerInterface {
 		}
 		currentAuth = map.get(id).getAuthorization();
 
+		LibrarySystem.hideAllWindows();
+
 		if(currentAuth.name().equals("LIBRARIAN")){
-			LibrarySystem.hideAllWindows();
-			LibrarianDashboard.INSTANCE.init();
+
+			if(!LibrarianDashboard.INSTANCE.isInitialized()){
+				LibrarianDashboard.INSTANCE.init();
+			}
 			LibrarianDashboard.INSTANCE.setVisible(true);
 		}
 		else if(currentAuth.name().equals("ADMIN")){
 			UtilGui.hideAllWindows();
-			AdministratorsDashboard.INSTANCE.init();
+
+			if(!AdministratorsDashboard.INSTANCE.isInitialized())
+			  AdministratorsDashboard.INSTANCE.init();
 			AdministratorsDashboard.INSTANCE.setVisible(true);
 		}
 		else if(currentAuth.name().equals("BOTH")){
 
-//			UtilGui.hideAllWindows();
-//			AdministratorsDashboard.INSTANCE.init();
-//			AdministratorsDashboard.INSTANCE.setVisible(true);
+			UtilGui.hideAllWindows();
+			if(!AdministratorsDashboard.INSTANCE.isInitialized())
+			   BothDashboard.INSTANCE.init();
+			BothDashboard.INSTANCE.setVisible(true);
 
 		}else{
 			throw new LoginException("Cannot Authorize");
 		}
-
 	}
 	@Override
 	public List<String> allMemberIds() {
@@ -90,11 +94,14 @@ public class SystemController implements ControllerInterface {
 	public boolean addBook(String isbn , String title , int maxBorrowDays, List<Author> authors) throws BookCopyException {
 
 		Book book = new Book(isbn, title, maxBorrowDays, authors);
-		book.addCopy();
 		BookController bookController = new BookController();
 		bookController.addNewBook(book);
-
 		return true;
+	}
+
+	public void saveBook(Book book){
+		BookController bookController = new BookController();
+		bookController.addNewBook(book);
 	}
 
 	/**
@@ -146,5 +153,10 @@ public class SystemController implements ControllerInterface {
 	@Override
 	public LibraryMember addLibraryMember(String memberNumber, String firstName, String lastName, String phoneNumber, Address address) {
 		return new LibraryMember(memberNumber, firstName, lastName, phoneNumber, address);
+	}
+
+	@Override
+	public void deleteMember(LibraryMember memberId) {
+		da.deleteMember(memberId);
 	}
 }

@@ -18,4 +18,5 @@ public interface DataAccess {
 	public void saveCheckout(String memberId , CheckOutRecord record);
 
 
-	}
+	void deleteMember(LibraryMember member);
+}

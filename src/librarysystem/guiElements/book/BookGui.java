@@ -34,6 +34,7 @@ public class BookGui extends JPanel{
     private BookGui() {
         addBookForm();
         myTable = loadTableData();
+        myTable.setDefaultEditor(Object.class , null);
     }
 
     private JTable loadTableData() {
@@ -129,7 +130,6 @@ public class BookGui extends JPanel{
 
             try {
 
-
                 // apply Ruleset
                 RuleSet bookRules = RuleSetFactory.getRuleSet(BookGui.this);
                 bookRules.applyRules(BookGui.this);
@@ -139,10 +139,7 @@ public class BookGui extends JPanel{
                 String authorNames = bookFields[3].getText().trim();
 
                 int maxBorrowDays = Integer.parseInt(bookFields[2].getText());
-
-
                 Author author = new Author(authorNames, "L.", "12212" , new Address("1000 N. 4th st.", "Fairfield", "IA", "52557"), "Student");
-
                 List<Author> authors = new ArrayList<Author>();
                 authors.add(author);
                 ci.addBook(isbn, title, maxBorrowDays, (ArrayList<Author>) authors);

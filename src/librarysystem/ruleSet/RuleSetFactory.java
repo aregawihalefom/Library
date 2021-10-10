@@ -1,7 +1,9 @@
 package librarysystem.ruleSet;
 
 import librarysystem.LoginScreen;
+import librarysystem.guiElements.book.AddBookCopyPanel;
 import librarysystem.guiElements.book.BookGui;
+import librarysystem.guiElements.member.EditOrDeleteMember;
 import librarysystem.guiElements.member.MemberUI;
 import librarysystem.guiElements.book.SearchBookPanel;
 import librarysystem.guiElements.checkOut.CheckOutBookPanel;
@@ -25,6 +27,8 @@ final public class RuleSetFactory {
 		map.put(SearchBookPanel.class, new SearchBookRuleSet());
 		map.put(OverDuePanel.class, new OverDueRuleSet());
 		map.put(PrintMemberCheckOut.class, new PrintMemberCheckOutRuleSet());
+		map.put(AddBookCopyPanel.class, new BookCopyRuleSet());
+		map.put(EditOrDeleteMember.class,  new EditOrDeleteMemberRuleSet());
 	}
 	public static RuleSet getRuleSet(Component c) {
 		Class<? extends Component> cl = c.getClass();

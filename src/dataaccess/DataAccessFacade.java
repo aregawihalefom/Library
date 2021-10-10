@@ -67,6 +67,14 @@ public class DataAccessFacade implements DataAccess {
 		saveToStorage(StorageType.CHECKOUT, chekOutRecordHashMap);
 	}
 
+	@Override
+	public void deleteMember(LibraryMember member) {
+		HashMap<String, LibraryMember> mems = readMemberMap();
+		String memberId = member.getMemberId();
+		mems.remove(memberId);
+		saveToStorage(StorageType.MEMBERS, mems);
+	}
+
 	@SuppressWarnings("unchecked")
 	public HashMap<String, CheckOutRecord> readCheckOutRecord() {
 		//Returns a Map with name/value pairs being

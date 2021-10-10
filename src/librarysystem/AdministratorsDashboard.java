@@ -2,7 +2,8 @@ package librarysystem;
 
 import business.*;
 import librarysystem.guiElements.*;
-import librarysystem.guiElements.EditOrDeleteMember;
+import librarysystem.guiElements.member.EditOrDeleteMember;
+import librarysystem.guiElements.book.AddBookCopyPanel;
 import librarysystem.guiElements.book.BookGui;
 import librarysystem.guiElements.book.SearchBookPanel;
 import librarysystem.guiElements.member.MemberUI;
@@ -113,12 +114,12 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
         // book related panels
         JPanel searchBookPanel = SearchBookPanel.INSTANCE.getSearchBookPanel();
         JPanel addBookPanel = BookGui.INSTANCE.getAddBookPanel();
-        JPanel addBookCopyPanel = new JPanel();
+        JPanel addBookCopyPanel = AddBookCopyPanel.INSTANCE.getAddBookCopyPanel();
 
         // member related panels
         JPanel searchMemberPanel = SearchMemberPanel.INSTANCE.getsearchMemberPanel();
         JPanel addMemberPanel = MemberUI.INSTANCE.getAddMemberPanel();
-        JPanel editOrDeletePanel = EditOrDeleteMember.INSTANCE.getEditOrDeletePanel();
+        JPanel editOrDeletePanel = EditOrDeleteMember.INSTANCE.getAddMemberPanel();
 
         // logout panel
         JPanel logoutPanel = Logout.INSTANCE.getLoginPanel();
@@ -134,16 +135,15 @@ public class AdministratorsDashboard extends JFrame implements LibWindow {
         cards.add(editOrDeletePanel, itemList.get(6).getItemName());
         cards.add(logoutPanel, itemList.get(7).getItemName());
 
-
     }
+
 
 
     public void setAdminDashboardPanel() {
 
         // create  panel
         adminDashobardPanel = new JPanel(new BorderLayout());
-        adminDashobardPanel.add(new JLabel("Adminstrator Dashboard"), BorderLayout.NORTH);
-
+        adminDashobardPanel.add(new JLabel("Administrator Dashboard"), BorderLayout.NORTH);
 
         JTabbedPane tp=new JTabbedPane();
         tp.setPreferredSize(new Dimension(Config.APP_WIDTH - Config.DIVIDER, Config.APP_HEIGHT));

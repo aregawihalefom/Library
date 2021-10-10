@@ -80,6 +80,7 @@ final public class Book implements Serializable {
 	public String getTitle() {
 		return title;
 	}
+
 	public BookCopy[] getCopies() {
 		return copies;
 	}

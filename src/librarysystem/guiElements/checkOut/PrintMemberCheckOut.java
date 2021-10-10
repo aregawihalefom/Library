@@ -1,6 +1,7 @@
 package librarysystem.guiElements.checkOut;
 import business.*;
 import business.exceptions.BookCopyException;
+import business.exceptions.LibraryMemberException;
 import librarysystem.Config;
 import librarysystem.Messages;
 import librarysystem.Util;
@@ -150,7 +151,7 @@ public class PrintMemberCheckOut extends JPanel{
 
                 clearFormFields();
 
-            } catch (BookCopyException | RuleException | NumberFormatException ex) {
+            } catch (BookCopyException | RuleException | NumberFormatException  ex) {
                 new Messages.InnerFrame().showMessage(ex.getMessage(), "Error");
             }
 

@@ -26,10 +26,11 @@ public class MemberUI extends JPanel{
     private JPanel addMemberPanel;
 
     private MemberUI() {
-        memeberAttributes = new String[] {"Member Number", "First Name", "Last Name", "Phone Number", "Street", "City", "State", "Zip"};
+        memeberAttributes = new String[] {"Member ID", "First Name", "Last Name", "Phone Number", "Street", "City", "State", "Zip"};
         memberFields = new JTextField[memeberAttributes.length];
         addMemberForm();
         myTable = loadDataToTable();
+        myTable.setShowGrid(true);
     }
 
     public JTextField[] getMemberFields() {

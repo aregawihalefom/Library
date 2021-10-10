@@ -1,5 +1,7 @@
 package librarysystem.ruleSet;
 
+import business.exceptions.LibraryMemberException;
+
 import java.awt.*;
 
 public interface RuleSet {

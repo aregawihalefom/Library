@@ -5,4 +5,5 @@ public enum UIController {
     public LoginScreen loginScreen;
     public AdministratorsDashboard admin;
     public LibrarianDashboard librarianDashboard;
+    public BothDashboard bothDashboard;
 }

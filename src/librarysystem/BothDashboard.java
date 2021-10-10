@@ -1,14 +1,16 @@
 package librarysystem;
 
 import business.*;
-import librarysystem.guiElements.book.BookGui;
-import librarysystem.guiElements.checkOut.CheckOutGui;
-import librarysystem.guiElements.Logout;
-import librarysystem.guiElements.member.MemberUI;
-import librarysystem.guiElements.book.SearchBookPanel;
+import librarysystem.guiElements.*;
 import librarysystem.guiElements.checkOut.CheckOutBookPanel;
+import librarysystem.guiElements.checkOut.CheckOutGui;
 import librarysystem.guiElements.checkOut.OverDuePanel;
 import librarysystem.guiElements.checkOut.PrintMemberCheckOut;
+import librarysystem.guiElements.member.EditOrDeleteMember;
+import librarysystem.guiElements.book.AddBookCopyPanel;
+import librarysystem.guiElements.book.BookGui;
+import librarysystem.guiElements.book.SearchBookPanel;
+import librarysystem.guiElements.member.MemberUI;
 import librarysystem.guiElements.member.SearchMemberPanel;
 
 import javax.swing.*;
@@ -17,11 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class LibrarianDashboard extends JFrame implements LibWindow {
+public class BothDashboard extends JFrame implements LibWindow {
 
     private static final long serialVersionUID = 1L;
 
-    public static final LibrarianDashboard INSTANCE = new LibrarianDashboard();
+    public static final BothDashboard INSTANCE = new BothDashboard();
     ControllerInterface ci = new SystemController();
 
     private boolean isInitialized = false;
@@ -29,25 +31,23 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
     JList<ListItem> linkList;
     JPanel cards;
 
-    private String[] copyAttributes = {"Copy Number", "Book ISBN"};
-    private JTextField[] copyFields = new JTextField[copyAttributes.length];
     List<ListItem> itemList = new ArrayList<>();
 
-    private JPanel librarianDashobardPanel;
+    private  JPanel bothDashobardPanel;
     public JTable memberListJTable,bookListJTable, checkOutList;
 
     //Singleton class
-    private LibrarianDashboard() {
+    private BothDashboard() {
         setSize(Config.APP_WIDTH, Config.APP_HEIGHT);
+        UIController.INSTANCE.bothDashboard = this;
         memberListJTable = MemberUI.INSTANCE.getMemberList();
         bookListJTable = BookGui.INSTANCE.getBookList();
         checkOutList = CheckOutGui.INSTANCE.getCheckOutList();
-        UIController.INSTANCE.librarianDashboard = this;
     }
 
     public void constructSideBarMenu(){
 
-        for(String item : Config.LIBRARIAN_MENU){
+        for(String item : Config.ALL_MENU){
             itemList.add(new ListItem(item, true));
         }
     }
@@ -80,6 +80,7 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
         linkList.setFixedCellHeight(40);
         linkList.setSelectionForeground(Color.BLACK);
 
+
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, linkList, cards);
         splitPane.setDividerLocation(Config.DIVIDER);
 
@@ -88,7 +89,7 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
 
         add(splitPane);
         isInitialized = true;
-       // this.setResizable(false);
+        // this.setResizable(false);
         centerFrameOnDesktop(this);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -106,7 +107,7 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
     public void createMainPanels() {
 
         // create admin panel
-        setLibrarianDashboardPanel();
+        setBothDashboardPanel();
 
         // Assign crossponding panels to crsossponding Cards
         setCards();
@@ -115,40 +116,47 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
 
     public void setCards(){
 
-        // Checkout
-        // checkoutRelated Panels
-        JPanel checkOutBookPanel = CheckOutBookPanel.INSTANCE.getCheckOutPanel();
-        JPanel checkOutStatusPanel = OverDuePanel.INSTANCE.getSearchOverDuePanel();
-        JPanel searchMemberCheckOutPanel = PrintMemberCheckOut.INSTANCE.getPrintMemberCheckOutPanel();
-
         // book related panels
         JPanel searchBookPanel = SearchBookPanel.INSTANCE.getSearchBookPanel();
+        JPanel addBookPanel = BookGui.INSTANCE.getAddBookPanel();
+        JPanel addBookCopyPanel = AddBookCopyPanel.INSTANCE.getAddBookCopyPanel();
 
         // member related panels
         JPanel searchMemberPanel = SearchMemberPanel.INSTANCE.getsearchMemberPanel();
+        JPanel addMemberPanel = MemberUI.INSTANCE.getAddMemberPanel();
+        JPanel editOrDeletePanel = EditOrDeleteMember.INSTANCE.getAddMemberPanel();
 
         // logout panel
         JPanel logoutPanel = Logout.INSTANCE.getLoginPanel();
 
 
+        // checkoutRelated Panels
+        JPanel checkOutBookPanel = CheckOutBookPanel.INSTANCE.getCheckOutPanel();
+        JPanel checkOutStatusPanel = OverDuePanel.INSTANCE.getSearchOverDuePanel();
+        JPanel searchMemberCheckOutPanel = PrintMemberCheckOut.INSTANCE.getPrintMemberCheckOutPanel();
+
+        // Dashboard panel
         cards = new JPanel(new CardLayout());
-        cards.add(librarianDashobardPanel, itemList.get(0).getItemName());
-        cards.add(searchMemberPanel, itemList.get(1).getItemName());
-        cards.add(searchBookPanel, itemList.get(2).getItemName());
-        cards.add(checkOutBookPanel, itemList.get(3).getItemName());
-        cards.add(checkOutStatusPanel, itemList.get(4).getItemName());
-        cards.add(searchMemberCheckOutPanel, itemList.get(5).getItemName());
-        cards.add(logoutPanel, itemList.get(6).getItemName());
+        cards.add(bothDashobardPanel, itemList.get(0).getItemName());
+        cards.add(addMemberPanel, itemList.get(1).getItemName());
+        cards.add(addBookPanel, itemList.get(2).getItemName());
+        cards.add(addBookCopyPanel, itemList.get(3).getItemName());
+        cards.add(checkOutBookPanel, itemList.get(4).getItemName());
+        cards.add(checkOutStatusPanel, itemList.get(5).getItemName());
+        cards.add(searchBookPanel, itemList.get(6).getItemName());
+        cards.add(searchMemberPanel, itemList.get(7).getItemName());
+        cards.add(searchMemberCheckOutPanel, itemList.get(8).getItemName());
+        cards.add(editOrDeletePanel, itemList.get(9).getItemName());
+        cards.add(logoutPanel, itemList.get(10).getItemName());
 
     }
 
 
-    public void setLibrarianDashboardPanel() {
+    public void setBothDashboardPanel() {
 
         // create  panel
-        librarianDashobardPanel = new JPanel(new BorderLayout());
-        librarianDashobardPanel.add(new JLabel("Librarian Dashboard"), BorderLayout.NORTH);
-
+        bothDashobardPanel = new JPanel(new BorderLayout());
+        bothDashobardPanel.add(new JLabel("Administrator Dashboard"), BorderLayout.NORTH);
 
         JTabbedPane tp=new JTabbedPane();
         tp.setPreferredSize(new Dimension(Config.APP_WIDTH - Config.DIVIDER, Config.APP_HEIGHT));
@@ -158,9 +166,9 @@ public class LibrarianDashboard extends JFrame implements LibWindow {
         tp.setFont(Config.DEFUALT_FONT);
         tp.setForeground(Util.LINK_AVAILABLE);
         tp.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-        librarianDashobardPanel.add(tp , BorderLayout.CENTER);
+        bothDashobardPanel.add(tp , BorderLayout.CENTER);
     }
-
+    
     @Override
     public boolean isInitialized() {
         return isInitialized;
